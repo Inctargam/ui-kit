@@ -1,0 +1,20 @@
+{
+  /* Типы пакета. Vite их не генерирует — он собирает только JS, поэтому .d.ts
+     эмитит сам tsc, отдельным шагом после vite build (vite чистит dist перед сборкой,
+     запуск наоборот стёр бы типы).
+
+     Отличия от tsconfig.app.json: emit включён, dev/ не входит в пакет,
+     rootDir=src даёт структуру dist, совпадающую с preserveModules в vite.config.ts. */
+  "extends": "./tsconfig.app.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "outDir": "dist",
+    "rootDir": "src",
+    /* Инкрементальность выключена намеренно: vite build чистит dist перед сборкой,
+       а tsc по своему кешу считал бы типы уже собранными и не переписал бы их. */
+    "incremental": false
+  },
+  "include": ["src"]
+}
