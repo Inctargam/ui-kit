@@ -16,6 +16,7 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
+    "./styles.css": "./dist/styles.css",
     "./styles/tokens.css": "./dist/styles/tokens.css",
     "./styles/reset.css": "./dist/styles/reset.css",
     "./package.json": "./package.json"
@@ -34,6 +35,7 @@
     "icons": "pnpm icons:clean && pnpm icons:build"
   },
   "peerDependencies": {
+    "@base-ui/react": "^1.5.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
@@ -41,6 +43,7 @@
     "clsx": "^2.1.1"
   },
   "devDependencies": {
+    "@base-ui/react": "1.5.0",
     "@eslint/js": "^10.0.1",
     "@storybook/addon-a11y": "10.5.4",
     "@storybook/addon-docs": "10.5.4",

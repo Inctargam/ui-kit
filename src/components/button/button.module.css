@@ -1,0 +1,121 @@
+.button {
+  box-sizing: border-box;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-height: var(--control-height-md);
+  padding-inline: var(--space-6);
+
+  /* Прозрачная рамка на всех вариантах: outline подменяет ей цвет и не становится
+     от этого выше остальных. box-sizing свой — reset.css потребитель подключать
+     не обязан. */
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-base);
+  font-size: var(--font-size-regular-16);
+  font-weight: var(--control-font-weight);
+  line-height: var(--line-height-regular-16);
+  cursor: pointer;
+  text-decoration: none;
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+/* Кольцо фокуса одно на все варианты: рисуется через outline, поэтому размеров
+   кнопки не меняет. */
+.button:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* pointer-events не глушим: клики блокирует нативный disabled, а без указателя
+   курсор not-allowed не показался бы вовсе. */
+.button[data-disabled] {
+  cursor: not-allowed;
+}
+
+/* ─── Primary ─────────────────────────────── */
+
+.primary {
+  background-color: var(--color-accent);
+  color: var(--color-text-on-accent);
+}
+
+.primary:hover {
+  background-color: var(--color-accent-hover);
+}
+
+.primary:active {
+  background-color: var(--color-accent-active);
+}
+
+.primary[data-disabled] {
+  background-color: var(--color-accent-disabled);
+  color: var(--color-text-disabled);
+}
+
+/* ─── Secondary ───────────────────────────── */
+
+.secondary {
+  background-color: var(--color-control-bg);
+  color: var(--color-text-primary);
+}
+
+.secondary:hover {
+  background-color: var(--color-control-bg-hover);
+}
+
+.secondary:active {
+  background-color: var(--color-control-bg-active);
+}
+
+.secondary[data-disabled] {
+  background-color: var(--color-control-bg-disabled);
+  color: var(--color-text-disabled);
+}
+
+/* ─── Outline ─────────────────────────────── */
+
+/* Рамка и текст всегда одного цвета, поэтому оба свойства ходят за одним токеном
+   акцента, а не за парой accent / border-accent. */
+.outline {
+  border-color: var(--color-accent);
+  background-color: transparent;
+  color: var(--color-accent);
+}
+
+.outline:hover {
+  border-color: var(--color-accent-hover);
+  color: var(--color-accent-hover);
+}
+
+.outline:active {
+  border-color: var(--color-accent-active);
+  color: var(--color-accent-active);
+}
+
+.outline[data-disabled] {
+  border-color: var(--color-accent-disabled);
+  color: var(--color-accent-disabled);
+}
+
+/* ─── Text ────────────────────────────────── */
+
+.text {
+  background-color: transparent;
+  color: var(--color-accent);
+}
+
+.text:hover {
+  color: var(--color-accent-hover);
+}
+
+.text:active {
+  color: var(--color-accent-active);
+}
+
+.text[data-disabled] {
+  color: var(--color-text-disabled);
+}

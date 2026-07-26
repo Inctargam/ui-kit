@@ -5,8 +5,8 @@
 Компоненты выносятся из `shared/ui` приложения `remark-gram` в отдельный переиспользуемый
 пакет.
 
-**Статус:** этап 3 — каркас поднят, токены и 90 иконок перенесены, сборка пакета настроена,
-Storybook поднят. Компонентов ещё нет.
+**Статус:** этап 5 — каркас, токены, 90 иконок, сборка пакета и Storybook готовы.
+Компоненты переезжают по одному: перенесены `Button` и `Card`, осталось 13.
 
 ## Разработка
 
@@ -33,6 +33,7 @@ pnpm dev
 
 ```
 src/index.ts        публичный API библиотеки — что экспортировано, то поддерживается
+src/components/     компонент на папку: Button.tsx + button.module.css + index.ts
 src/styles/         tokens.css (палитра + семантика + размеры) и reset.css
 src/icons/          90 иконок: svg/ — источник, components/ — генерация, index.ts — баррель
 src/**/*.stories.tsx  витрина Storybook, лежит рядом с тем, что показывает; в пакет не едет
@@ -77,15 +78,37 @@ tsconfig.build.json конфиг для генерации .d.ts (emitDeclaratio
 
 Что отдаёт пакет:
 
-| Импорт                                  | Что это                                      |
-| --------------------------------------- | -------------------------------------------- |
-| `@remark-gram/ui-kit`                   | компоненты и типы                            |
-| `@remark-gram/ui-kit/styles/tokens.css` | токены — нужны всегда                        |
-| `@remark-gram/ui-kit/styles/reset.css`  | сброс стилей — по желанию, он глобальный     |
-| `@remark-gram/ui-kit/styles.css`        | стили компонентов (появится вместе с первым) |
+| Импорт                                  | Что это                                  |
+| --------------------------------------- | ---------------------------------------- |
+| `@remark-gram/ui-kit`                   | компоненты и типы                        |
+| `@remark-gram/ui-kit/styles/tokens.css` | токены — нужны всегда                    |
+| `@remark-gram/ui-kit/styles/reset.css`  | сброс стилей — по желанию, он глобальный |
+| `@remark-gram/ui-kit/styles.css`        | стили компонентов — нужны всегда         |
 
 Проверка сборки без публикации: `pnpm build && pnpm pack` — тарбол ставится в тестовый
 проект как `file:` зависимость.
+
+## Подключение
+
+```tsx
+// один раз на приложение: токены обязательны, reset по желанию
+import '@remark-gram/ui-kit/styles/tokens.css'
+import '@remark-gram/ui-kit/styles.css'
+
+import { BellOutlineIcon, Button, Card } from '@remark-gram/ui-kit'
+
+export const Example = () => (
+  <Card padding="large">
+    <BellOutlineIcon size={24} />
+    <Button variant="outline" onClick={() => {}}>
+      Подписаться
+    </Button>
+  </Card>
+)
+```
+
+Без `tokens.css` компоненты остаются без цветов и размеров: всё оформление внутри —
+это `var(--…)`. Иконки цвет берут от `color` родителя, своего пропа под цвет у них нет.
 
 ## Установка как пакета
 

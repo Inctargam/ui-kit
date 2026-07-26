@@ -139,14 +139,20 @@
   --space-5: 20px;
   --space-6: 24px;
   --space-8: 32px;
+  --space-9: 36px;
   --space-10: 40px;
   --space-12: 48px;
 
-  /* Высота интерактивных элементов. Вертикальный паддинг кнопки (6px) в сетку
-     не попадает — он не самостоятельная величина, а остаток от высоты:
-     padding-block = (--control-height-md - --line-height-regular-16) / 2. */
+  /* Высота интерактивных элементов. Контрол задаёт её через min-height и центрирует
+     содержимое, а не считает вертикальный паддинг: иначе вариант с рамкой
+     оказывается на 2px выше варианта без неё. */
   --control-height-sm: 24px;
   --control-height-md: 36px;
+
+  /* Подпись контрола — 16px/600/24px. В шкале типографики такой пары нет: числа
+     совпадают с h3, но это роль заголовка. Размер и интерлиньяж берём из regular-16,
+     вес живёт здесь, рядом с остальными размерами контрола. */
+  --control-font-weight: 600;
   --icon-size-sm: 16px;
   --icon-size-md: 24px;
   --radius-none: 0;
@@ -171,11 +177,23 @@
   --color-bg-overlay: color-mix(in srgb, var(--color-dark-900) 50%, transparent);
   --color-bg-accent-subtle: color-mix(in srgb, var(--color-primary-100) 15%, transparent);
 
+  /* Заливка нейтрального контрола: вторичная кнопка, поле ввода, переключатель.
+     Отдельно от --color-bg-*: те описывают слои страницы, и совпадение значений
+     здесь случайное — поменяется фон панели, заливка кнопки меняться не должна. */
+  --color-control-bg: var(--color-dark-300);
+  --color-control-bg-hover: var(--color-dark-100);
+  --color-control-bg-active: var(--color-dark-500);
+  --color-control-bg-disabled: var(--color-dark-500);
+
   /* Текст */
   --color-text-primary: var(--color-light-100);
   --color-text-secondary: var(--color-light-900);
   --color-text-placeholder: var(--color-light-900);
-  --color-text-disabled: var(--color-dark-100);
+
+  /* light-900, а не dark-100: подпись выключенного контрола лежит на его собственной
+     заливке (primary-900, dark-500), а не на фоне страницы — тёмно-серый на ней
+     не читается вовсе. Прежнее значение было спекулятивным, потребителя у него не было. */
+  --color-text-disabled: var(--color-light-900);
   --color-text-inverted: var(--color-dark-900);
   --color-text-danger: var(--color-danger-500);
   --color-text-on-accent: var(--color-light-100);
