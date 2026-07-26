@@ -8,26 +8,39 @@ body {
   font-family: var(--font-base);
 }
 
-/* Поверхность холста. Переключается тулбаром: декоратор в preview.tsx ставит
-   data-surface на <html>.
+/* Поверхность, на которой лежит компонент. Переключается тулбаром: декоратор
+   в preview.tsx ставит значение в data-sb-surface.
 
    Это НЕ переключатель светлой темы: светлого набора токенов в дизайн-системе
    нет, она тёмная по определению. Смысл переключателя — проверить пару
    --color-bg-inverted / --color-text-inverted и контраст иконок на светлом:
    на тёмном фоне ошибку в них глазами не поймать. Появится светлая тема —
-   здесь будет смена набора семантических токенов, а не двух свойств. */
-html[data-surface='dark'] body {
+   здесь будет смена набора семантических токенов, а не двух свойств.
+
+   Хук — data-атрибут, а не класс: сразу видно, что это служебная разметка
+   Storybook, а не стиль кита. */
+[data-sb-surface] {
+  padding: var(--space-4);
+}
+
+[data-sb-surface='dark'] {
   background-color: var(--color-bg);
   color: var(--color-text-primary);
 }
 
-html[data-surface='light'] body {
+[data-sb-surface='light'] {
   background-color: var(--color-bg-inverted);
   color: var(--color-text-inverted);
 }
 
-/* Отступ холста. Хук — data-атрибут, а не класс: сразу видно, что это служебная
-   разметка Storybook, а не стиль кита. */
-[data-sb-surface] {
-  padding: var(--space-4);
+/* Добор холста под обёрткой: она занимает высоту содержимого, и под коротким
+   компонентом иначе виден дефолтный белый. Только в режиме стори — на Docs
+   декоратор атрибут на <html> не ставит, там страница остаётся в собственной
+   теме Storybook. */
+html[data-surface='dark'] body {
+  background-color: var(--color-bg);
+}
+
+html[data-surface='light'] body {
+  background-color: var(--color-bg-inverted);
 }

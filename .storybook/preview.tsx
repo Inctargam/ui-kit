@@ -8,22 +8,35 @@ import type { Preview } from '@storybook/react-vite'
 import { type ReactNode, useLayoutEffect } from 'react'
 
 /**
- * Держит выбранную в тулбаре поверхность на <html>: фон и цвет текста задаёт
- * preview.css, здесь только атрибут.
+ * Держит выбранную в тулбаре поверхность: фон и цвет текста задаёт preview.css,
+ * здесь только атрибуты.
  *
- * Атрибут ставится на документ, а не на обёртку стори, потому что фон нужен всему
- * холсту: обёртка занимает высоту содержимого, и под коротким компонентом остался бы
- * дефолтный белый.
+ * Атрибута два, и это не дубль. На обёртке он нужен всегда — она и есть поверхность,
+ * на которой лежит компонент. На <html> он добавляется только в режиме стори, потому
+ * что обёртка занимает высоту содержимого: под коротким компонентом остался бы
+ * дефолтный белый холст.
+ *
+ * В режиме Docs документ не трогаем вовсе. Docs рисуется в том же iframe, но своей
+ * светлой темой — покрасив body, мы кладём её тёмный текст на наш чёрный фон
+ * и получаем нечитаемую страницу.
  *
  * Отдельный компонент, а не хук прямо в декораторе: декоратор вызывается как функция,
  * и правила хуков на нём не действуют.
  */
-function Surface({ surface, children }: { surface: string; children: ReactNode }) {
+function Surface({ surface, isStory, children }: { surface: string; isStory: boolean; children: ReactNode }) {
   useLayoutEffect(() => {
-    document.documentElement.dataset.surface = surface
-  }, [surface])
+    if (!isStory) return
 
-  return <div data-sb-surface>{children}</div>
+    document.documentElement.dataset.surface = surface
+
+    // Убираем за собой: iframe переиспользуется при переходе со стори на Docs,
+    // и без очистки на документе остался бы фон от прошлого режима.
+    return () => {
+      delete document.documentElement.dataset.surface
+    }
+  }, [surface, isStory])
+
+  return <div data-sb-surface={surface}>{children}</div>
 }
 
 const preview: Preview = {
@@ -31,8 +44,8 @@ const preview: Preview = {
   tags: ['autodocs'],
 
   decorators: [
-    (Story, { globals }) => (
-      <Surface surface={globals.surface}>
+    (Story, { globals, viewMode }) => (
+      <Surface surface={globals.surface} isStory={viewMode === 'story'}>
         <Story />
       </Surface>
     ),
