@@ -1,75 +1,49 @@
-# React + TypeScript + Vite
+# ui-kit
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Библиотека UI-компонентов: Base UI + CSS Modules, React 19, TypeScript.
 
-Currently, two official plugins are available:
+Компоненты выносятся из `shared/ui` приложения `remark-gram` в отдельный переиспользуемый
+пакет.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+**Статус:** этап 0 — библиотечный каркас поднят, компонентов ещё нет.
 
-## React Compiler
+## Разработка
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Пакетный менеджер — **pnpm**.
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+pnpm install
+pnpm dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+| Команда             | Что делает                                                   |
+| ------------------- | ------------------------------------------------------------ |
+| `pnpm dev`          | Vite dev-сервер с песочницей `dev/` (до появления Storybook) |
+| `pnpm build`        | `tsc -b` + `vite build`                                      |
+| `pnpm typecheck`    | только проверка типов                                        |
+| `pnpm lint`         | ESLint по репозиторию                                        |
+| `pnpm lint:css`     | Stylelint по всем `*.css`                                    |
+| `pnpm format`       | Prettier, запись изменений                                   |
+| `pnpm format:check` | Prettier, только проверка (для CI)                           |
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Структура
 
 ```
+src/index.ts        публичный API библиотеки — что экспортировано, то поддерживается
+dev/                локальная песочница: index.html монтирует dev/main.tsx, в пакет не едет
+public/             статика песочницы
+```
+
+Алиас `@/*` → `./src/*` объявлен дважды: в `tsconfig.app.json` (для типов)
+и в `vite.config.ts` (для сборки). Правишь в одном — правь в другом.
+Внутри `src/` импорты между компонентами — относительные.
+
+## Соглашения
+
+Стилизация — CSS Modules на компонент, классы мержатся через `clsx`, состояния через
+`[data-*]`-атрибуты Base UI. Цвета, шрифты и отступы — только через токены, хардкода нет.
+Компонент не задаёт себе внешние `margin` — расстановкой занимается родитель.
+
+## Установка как пакета
+
+Пока не опубликован. Реестр — публичный npm, версионирование — Changesets (этапы 7–8 роадмапа).
