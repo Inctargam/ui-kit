@@ -19,6 +19,9 @@ ROADMAP.md
 LOG.md
 QA.md
 
+# Git-worktree'ы параллельных задач лежат внутри репозитория — в историю не едут.
+.claude/worktrees
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

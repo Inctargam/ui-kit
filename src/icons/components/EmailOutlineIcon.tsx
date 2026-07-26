@@ -1,0 +1,19 @@
+// Сгенерировано `pnpm icons:build` из src/icons/svg. Руками не править.
+import type { IconProps } from '../types'
+export function EmailOutlineIcon({ size = 24, ...props }: IconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      width={size}
+      height={size}
+      aria-hidden="true"
+      {...props}>
+      <path
+        fill="currentColor"
+        d="M19 4H5a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3m-.67 2L12 10.75 5.67 6zM19 18H5a1 1 0 0 1-1-1V7.25l7.4 5.55a1 1 0 0 0 1.2 0L20 7.25V17a1 1 0 0 1-1 1"
+      />
+    </svg>
+  )
+}
