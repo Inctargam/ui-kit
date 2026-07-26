@@ -242,6 +242,14 @@ for (const file of files) {
     path,
     plugins: [
       removeFullCanvasClipPath,
+      // `xlink:href` → `href` (нужно флагам с их <use>): namespace xlink устарел,
+      // а в JSX он превращается в отдельный проп `xmlnsXlink`, который тянуть незачем.
+      //
+      // Строго до preset-default. Стоя после него, этот плагин ломал идемпотентность:
+      // первый прогон отдавал preset-default разметку с xlink, второй — уже без него,
+      // и preset-default вёл себя по-разному (в том числе снимал preserveAspectRatio
+      // у <image> только на втором проходе).
+      'removeXlink',
       {
         name: 'preset-default',
         params: {
@@ -257,9 +265,6 @@ for (const file of files) {
       ...(mono ? [] : [mapColors(colorOverrides[file])]),
       // Размер задаёт компонент через проп `size`, атрибуты на корне ему мешают.
       'removeDimensions',
-      // `xlink:href` → `href` (нужно флагам с их <use>): namespace xlink устарел,
-      // а в JSX он превращается в отдельный проп `xmlnsXlink`, который тянуть незачем.
-      'removeXlink',
       // Оставшиеся id (реальные клипы, паттерны флагов) префиксуем именем компонента:
       // иконки инлайнятся в один документ, а одинаковый id там разрешается в первый
       // встреченный элемент — вторая иконка отрисовалась бы содержимым первой.
