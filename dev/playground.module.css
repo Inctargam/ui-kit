@@ -61,6 +61,41 @@
   word-break: break-all;
 }
 
+/* Сетка иконок: фиксированные колонки, чтобы 90 штук читались как таблица,
+   а не как перенос по ширине окна */
+.iconGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+  gap: var(--space-3);
+}
+
+.iconCell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-primary);
+  text-align: center;
+}
+
+/* Ряд для проверки того, что одноцветные иконки правда следуют currentColor:
+   цвет задаётся на контейнере, иконка ничего о нём не знает */
+.iconColorRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.iconSizeRow {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-4);
+  color: var(--color-text-primary);
+}
+
 /* Текстовые токены показываем на обоих фонах: --color-text-inverted
    на тёмном просто не виден, и ошибку в нём глазами не поймать */
 .textRow {

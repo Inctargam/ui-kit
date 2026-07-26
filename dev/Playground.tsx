@@ -1,4 +1,7 @@
-import type { ReactNode } from 'react'
+import type { ComponentType, ReactNode } from 'react'
+
+import type { IconProps } from '@/icons'
+import * as iconSet from '@/icons'
 
 import styles from './playground.module.css'
 
@@ -62,6 +65,16 @@ const TYPOGRAPHY = [
 ]
 
 const SPACES = [1, 2, 3, 4, 5, 6, 8, 10, 12]
+
+/**
+ * Список берётся из барреля, а не пишется руками: иначе новая иконка молча
+ * не попадёт в песочницу. Namespace-импорт тут допустим — файл в пакет не едет,
+ * и tree-shaking ему не нужен.
+ */
+const ICONS = Object.entries(iconSet) as [string, ComponentType<IconProps>][]
+
+/** Иконки, у которых есть собственные цвета: их currentColor перекрашивать не должен. */
+const COLORED_ICONS = ['BellOutlineIcon', 'PaidIcon', 'GoogleIcon', 'FlagRuIcon', 'StripeIcon']
 
 function Swatch({ token }: { token: string }) {
   return (
@@ -163,6 +176,58 @@ export function Playground() {
             </span>
           </div>
         ))}
+      </Section>
+
+      <Section
+        title="Иконки: цвет"
+        hint="Одноцветные наследуют color родителя через currentColor — своего пропа цвета у них нет.">
+        {['--color-text-primary', '--color-text-secondary', '--color-danger', '--color-accent'].map((token) => (
+          <div className={styles.iconColorRow} key={token} style={{ color: `var(${token})` }}>
+            <iconSet.BellFillIcon />
+            <iconSet.HeartIcon />
+            <iconSet.SearchOutlineIcon />
+            <span className={styles.label}>color: var({token})</span>
+          </div>
+        ))}
+      </Section>
+
+      <Section
+        title="Иконки: собственные цвета"
+        hint="Бейдж и подложка переведены на токены, фирменные цвета чужих логотипов оставлены как есть.">
+        <div className={styles.iconColorRow} style={{ color: 'var(--color-success)' }}>
+          {COLORED_ICONS.map((name) => {
+            const Icon = iconSet[name as keyof typeof iconSet] as ComponentType<IconProps>
+            return <Icon key={name} size={40} />
+          })}
+          <span className={styles.label}>родителю задан зелёный: перекраситься должен только колокольчик</span>
+        </div>
+      </Section>
+
+      <Section title="Иконки: размер" hint="Проп size задаёт сторону квадрата; 16 и 24 — токены --icon-size-sm/md.">
+        <div className={styles.iconSizeRow}>
+          {[16, 24, 40, 64].map((size) => (
+            <div className={styles.iconCell} key={size}>
+              <iconSet.SettingsOutlineIcon size={size} />
+              <span className={styles.label}>size={size}</span>
+            </div>
+          ))}
+          {/* Логотипы 24×16 вписываются в квадрат по центру, а не растягиваются */}
+          <div className={styles.iconCell}>
+            <iconSet.PaypalIcon size={64} />
+            <span className={styles.label}>PaypalIcon 24×16</span>
+          </div>
+        </div>
+      </Section>
+
+      <Section title={`Иконки: набор (${ICONS.length})`} hint="Список выводится из барреля src/icons.">
+        <div className={styles.iconGrid}>
+          {ICONS.map(([name, Icon]) => (
+            <div className={styles.iconCell} key={name}>
+              <Icon />
+              <span className={styles.label}>{name}</span>
+            </div>
+          ))}
+        </div>
       </Section>
     </main>
   )
