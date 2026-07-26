@@ -1,0 +1,213 @@
+/**
+ * Токены ui-kit. Два независимых слоя:
+ *   base     — сырая палитра бренда: «какие цвета вообще существуют»;
+ *   semantic — роли: «где какой цвет применяется», только через var() на base.
+ *
+ * Компоненты берут ТОЛЬКО semantic. Прямое обращение к base из *.module.css —
+ * ошибка ревью: после него нельзя ни перекрасить бренд, ни завести светлую тему,
+ * не переписав каждый модуль.
+ */
+
+:root {
+  /* ═══ БАЗОВАЯ ПАЛИТРА ═══════════════════════ */
+
+  /* ─── Primary ─────────────────────────────── */
+  --color-primary-100: #73a5ff;
+  --color-primary-300: #4c8dff;
+  --color-primary-500: #397df6;
+  --color-primary-700: #2f68cc;
+  --color-primary-900: #234e99;
+
+  /* ─── Danger ──────────────────────────────── */
+  --color-danger-100: #ff8099;
+  --color-danger-300: #f23d61;
+  --color-danger-500: #cc1439;
+  --color-danger-700: #990f2b;
+  --color-danger-900: #660a1d;
+
+  /* ─── Warning ─────────────────────────────── */
+  --color-warning-100: #ffd073;
+  --color-warning-300: #e6ac39;
+  --color-warning-500: #d99100;
+  --color-warning-700: #960;
+  --color-warning-900: #640;
+
+  /* ─── Success ─────────────────────────────── */
+  --color-success-100: #80ffbf;
+  --color-success-300: #22e684;
+  --color-success-500: #14cc70;
+  --color-success-700: #0f9954;
+  --color-success-900: #0a6638;
+
+  /* ─── Light ───────────────────────────────── */
+
+  /* #fff — значение из STYLES.md. В tokens.css основного проекта стоял #e5e5e5:
+     правка заехала походя в коммите a277d05 под конкретный компонент и разошлась
+     по 44 использованиям. Дизайн-система её не подтверждает — возвращаем белый. */
+  --color-light-100: #fff;
+  --color-light-300: #f7fbff;
+  --color-light-500: #edf3fa;
+  --color-light-700: #d5dae0;
+  --color-light-900: #8d9094;
+
+  /* ─── Dark ────────────────────────────────── */
+  --color-dark-100: #4c4c4c;
+  --color-dark-300: #333;
+  --color-dark-500: #171717;
+  --color-dark-700: #0d0d0d;
+  --color-dark-900: #000;
+
+  /* ═══ ТИПОГРАФИКА ═══════════════════════════ */
+  --font-base: 'Inter', sans-serif;
+
+  /* large */
+  --font-size-large: 26px;
+  --font-weight-large: 600;
+  --line-height-large: 36px;
+
+  /* h1 */
+  --font-size-h1: 20px;
+  --font-weight-h1: 700;
+  --line-height-h1: 36px;
+
+  /* h2 */
+  --font-size-h2: 18px;
+  --font-weight-h2: 700;
+  --line-height-h2: 24px;
+
+  /* h3 */
+  --font-size-h3: 16px;
+  --font-weight-h3: 600;
+  --line-height-h3: 24px;
+
+  /* regular-16 */
+  --font-size-regular-16: 16px;
+  --font-weight-regular-16: 400;
+  --line-height-regular-16: 24px;
+
+  /* bold-16 */
+  --font-size-bold-16: 16px;
+  --font-weight-bold-16: 700;
+  --line-height-bold-16: 24px;
+
+  /* regular-14 */
+  --font-size-regular-14: 14px;
+  --font-weight-regular-14: 400;
+  --line-height-regular-14: 24px;
+
+  /* medium-14 */
+  --font-size-medium-14: 14px;
+  --font-weight-medium-14: 500;
+  --line-height-medium-14: 24px;
+
+  /* bold-14 */
+  --font-size-bold-14: 14px;
+  --font-weight-bold-14: 700;
+  --line-height-bold-14: 24px;
+
+  /* small */
+  --font-size-small: 12px;
+  --font-weight-small: 400;
+  --line-height-small: 16px;
+
+  /* semibold-small */
+  --font-size-semibold-small: 12px;
+  --font-weight-semibold-small: 600;
+  --line-height-semibold-small: 16px;
+
+  /* regular-link */
+  --font-size-regular-link: 14px;
+  --font-weight-regular-link: 400;
+  --line-height-regular-link: 24px;
+  --text-decoration-regular-link: underline;
+
+  /* small-link */
+  --font-size-small-link: 12px;
+  --font-weight-small-link: 400;
+  --line-height-small-link: 16px;
+  --text-decoration-small-link: underline;
+
+  /* ═══ РАЗМЕРЫ ═══════════════════════════════ */
+
+  /* Шаг сетки — 4px, номер токена умножается на него: --space-6 = 24px.
+     STYLES.md рекомендует 8pt, но инспекция компонентов даёт 4/6/8/12/16/24/40 —
+     половинный шаг реально используется, поэтому сетка 4pt, а не 8pt. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* Высота интерактивных элементов. Вертикальный паддинг кнопки (6px) в сетку
+     не попадает — он не самостоятельная величина, а остаток от высоты:
+     padding-block = (--control-height-md - --line-height-regular-16) / 2. */
+  --control-height-sm: 24px;
+  --control-height-md: 36px;
+  --icon-size-sm: 16px;
+  --icon-size-md: 24px;
+  --radius-none: 0;
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-pill: 9999px;
+  --transition-fast: 150ms;
+
+  /* ═══ СЕМАНТИКА ═════════════════════════════ */
+
+  /* Поверхности. Иерархия по «высоте»: страница → панель → всплывающий слой. */
+  --color-bg: var(--color-dark-700);
+  --color-bg-secondary: var(--color-dark-500);
+  --color-bg-elevated: var(--color-dark-500);
+  --color-bg-hover: var(--color-dark-300);
+  --color-bg-active: var(--color-dark-100);
+  --color-bg-disabled: var(--color-dark-300);
+  --color-bg-inverted: var(--color-light-100);
+
+  /* Полупрозрачные слои считаются от базового цвета через color-mix, а не HEX
+     с альфой: иначе перекраска темы их не затронет и они разъедутся с палитрой. */
+  --color-bg-overlay: color-mix(in srgb, var(--color-dark-900) 50%, transparent);
+  --color-bg-accent-subtle: color-mix(in srgb, var(--color-primary-100) 15%, transparent);
+
+  /* Текст */
+  --color-text-primary: var(--color-light-100);
+  --color-text-secondary: var(--color-light-900);
+  --color-text-placeholder: var(--color-light-900);
+  --color-text-disabled: var(--color-dark-100);
+  --color-text-inverted: var(--color-dark-900);
+  --color-text-danger: var(--color-danger-500);
+  --color-text-on-accent: var(--color-light-100);
+  --color-text-link: var(--color-primary-500);
+  --color-text-link-hover: var(--color-primary-300);
+
+  /* Границы. Обычная граница — dark-100: именно её ставят компоненты (5 мест),
+     а не light-700 из старой семантики (1 место). */
+  --color-border: var(--color-dark-100);
+  --color-border-strong: var(--color-light-100);
+  --color-border-hover: var(--color-light-900);
+  --color-border-disabled: var(--color-dark-300);
+  --color-border-accent: var(--color-primary-500);
+  --color-border-danger: var(--color-danger-500);
+
+  /* Акцент: заливка кнопок, активные состояния. Hover светлее базового,
+     active темнее — так нарисовано в макете, не путать местами. */
+  --color-accent: var(--color-primary-500);
+  --color-accent-hover: var(--color-primary-100);
+  --color-accent-active: var(--color-primary-700);
+  --color-accent-disabled: var(--color-primary-900);
+
+  /* Статусы: пара «контур/текст» + приглушённая заливка для алертов. */
+  --color-danger: var(--color-danger-500);
+  --color-danger-bg: var(--color-danger-900);
+  --color-warning: var(--color-warning-500);
+  --color-warning-bg: var(--color-warning-900);
+  --color-success: var(--color-success-500);
+  --color-success-bg: var(--color-success-900);
+
+  /* Фокус. Кольцо рисуется через outline, чтобы не влиять на размеры элемента. */
+  --color-focus-ring: var(--color-primary-700);
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+}

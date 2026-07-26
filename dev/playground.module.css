@@ -1,0 +1,98 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-10);
+  max-width: 960px;
+  padding: var(--space-8) var(--space-6);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.title {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-h2);
+  line-height: var(--line-height-h2);
+}
+
+.subtitle {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-small);
+  line-height: var(--line-height-small);
+}
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.swatch {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  width: 116px;
+}
+
+/* Чекерборд под свотчем: без него полупрозрачные токены неотличимы от фона */
+.chip {
+  height: var(--space-10);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-image:
+    linear-gradient(45deg, var(--color-dark-100) 25%, transparent 25%),
+    linear-gradient(-45deg, var(--color-dark-100) 25%, transparent 25%);
+  background-size: 12px 12px;
+}
+
+.chipFill {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-sm);
+}
+
+.label {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-small);
+  line-height: var(--line-height-small);
+  word-break: break-all;
+}
+
+/* Текстовые токены показываем на обоих фонах: --color-text-inverted
+   на тёмном просто не виден, и ошибку в нём глазами не поймать */
+.textRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.textSampleDark,
+.textSampleLight {
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-regular-14);
+  font-weight: var(--font-weight-bold-14);
+}
+
+.textSampleDark {
+  background-color: var(--color-bg);
+}
+
+.textSampleLight {
+  background-color: var(--color-bg-inverted);
+}
+
+.spaceRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.spaceBar {
+  height: var(--space-3);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-accent);
+}
