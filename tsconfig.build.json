@@ -3,7 +3,7 @@
      эмитит сам tsc, отдельным шагом после vite build (vite чистит dist перед сборкой,
      запуск наоборот стёр бы типы).
 
-     Отличия от tsconfig.app.json: emit включён, dev/ не входит в пакет,
+     Отличия от tsconfig.app.json: emit включён, .storybook/ и стори в пакет не входят,
      rootDir=src даёт структуру dist, совпадающую с preserveModules в vite.config.ts. */
   "extends": "./tsconfig.app.json",
   "compilerOptions": {
@@ -16,5 +16,9 @@
        а tsc по своему кешу считал бы типы уже собранными и не переписал бы их. */
     "incremental": false
   },
-  "include": ["src"]
+  "include": ["src"],
+  /* Стори лежат рядом с компонентами, но это витрина, а не API пакета: vite build
+     их не видит (они недостижимы из src/index.ts), и .d.ts на них тоже не нужны —
+     иначе в dist уехали бы типы, ссылающиеся на @storybook/* из devDependencies. */
+  "exclude": ["src/**/*.stories.tsx"]
 }

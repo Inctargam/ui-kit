@@ -1,0 +1,33 @@
+/* Стили самого Storybook — в пакет не едут.
+   Ровно то, что раньше лежало в dev/global.css: шрифт и фон страницы. Кит их
+   не поставляет, это зона потребителя, но без них стори показывали бы токены
+   не тем шрифтом и на белом фоне. */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+body {
+  font-family: var(--font-base);
+}
+
+/* Поверхность холста. Переключается тулбаром: декоратор в preview.tsx ставит
+   data-surface на <html>.
+
+   Это НЕ переключатель светлой темы: светлого набора токенов в дизайн-системе
+   нет, она тёмная по определению. Смысл переключателя — проверить пару
+   --color-bg-inverted / --color-text-inverted и контраст иконок на светлом:
+   на тёмном фоне ошибку в них глазами не поймать. Появится светлая тема —
+   здесь будет смена набора семантических токенов, а не двух свойств. */
+html[data-surface='dark'] body {
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+}
+
+html[data-surface='light'] body {
+  background-color: var(--color-bg-inverted);
+  color: var(--color-text-inverted);
+}
+
+/* Отступ холста. Хук — data-атрибут, а не класс: сразу видно, что это служебная
+   разметка Storybook, а не стиль кита. */
+[data-sb-surface] {
+  padding: var(--space-4);
+}

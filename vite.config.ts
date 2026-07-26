@@ -12,11 +12,20 @@ import { defineConfig, type Plugin } from 'vite'
  */
 function copyStyles(): Plugin {
   const files = ['tokens.css', 'reset.css']
+  let isLibraryBuild = false
 
   return {
     name: 'ui-kit:copy-styles',
     apply: 'build',
+    configResolved(config) {
+      // Этот же конфиг использует Storybook, а ему копия токенов не нужна —
+      // он подключает их импортом в preview.tsx. Признак нашей сборки — build.lib:
+      // Storybook его снимает в viteFinal.
+      isLibraryBuild = Boolean(config.build.lib)
+    },
     generateBundle() {
+      if (!isLibraryBuild) return
+
       for (const file of files) {
         this.emitFile({
           type: 'asset',
@@ -29,6 +38,9 @@ function copyStyles(): Plugin {
 }
 
 // https://vite.dev/config/
+// Конфиг подхватывает и Storybook (builder-vite): алиас, react-плагин и css.modules
+// у витрины и у пакета общие — классы в стори выглядят так же, как у потребителя.
+// Настройки library mode Storybook'у не нужны, он их снимает — см. viteFinal в .storybook/main.ts.
 export default defineConfig({
   plugins: [react(), copyStyles()],
   resolve: {
@@ -47,8 +59,6 @@ export default defineConfig({
     },
   },
   build: {
-    // Статика песочницы (иконки, favicon) в пакет не едет.
-    copyPublicDir: false,
     sourcemap: true,
     // Библиотека едет неминифицированной: сжимать будет сборщик потребителя, а вот
     // имена функций после минификации теряются — компонент виден в React DevTools

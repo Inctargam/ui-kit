@@ -1,10 +1,5 @@
-.page {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-10);
-  max-width: 960px;
-  padding: var(--space-8) var(--space-6);
-}
+/* Стили витрины токенов. В пакет не едут: файл импортируется только из
+   Tokens.stories.tsx, а стори из сборки библиотеки исключены. */
 
 .section {
   display: flex;
@@ -12,13 +7,7 @@
   gap: var(--space-4);
 }
 
-.title {
-  font-size: var(--font-size-h2);
-  font-weight: var(--font-weight-h2);
-  line-height: var(--line-height-h2);
-}
-
-.subtitle {
+.hint {
   color: var(--color-text-secondary);
   font-size: var(--font-size-small);
   line-height: var(--line-height-small);
@@ -59,41 +48,6 @@
   font-size: var(--font-size-small);
   line-height: var(--line-height-small);
   word-break: break-all;
-}
-
-/* Сетка иконок: фиксированные колонки, чтобы 90 штук читались как таблица,
-   а не как перенос по ширине окна */
-.iconGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
-  gap: var(--space-3);
-}
-
-.iconCell {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-1);
-  padding: var(--space-2);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  color: var(--color-text-primary);
-  text-align: center;
-}
-
-/* Ряд для проверки того, что одноцветные иконки правда следуют currentColor:
-   цвет задаётся на контейнере, иконка ничего о нём не знает */
-.iconColorRow {
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
-}
-
-.iconSizeRow {
-  display: flex;
-  align-items: flex-end;
-  gap: var(--space-4);
-  color: var(--color-text-primary);
 }
 
 /* Текстовые токены показываем на обоих фонах: --color-text-inverted
