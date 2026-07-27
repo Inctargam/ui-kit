@@ -43,6 +43,53 @@
 - − стори `Hover`/`Focus`/`Active` у `RadioGroup` — подменяли состояние через несуществующую переменную
 - − стори `Interactive` у `Checkbox` — тянет `storybook/test`, его нет до этапа 6
 
+## Батч 3: `select`, `tabs`
+
+`select` — портал и слой:
+
+- \+ `--z-index-popup` (1000) на позиционер: Base UI `z-index` не ставит вовсе, и попап
+  из портала в `<body>` проигрывал любому позиционированному элементу потребителя
+- ± попапу `max-height: var(--available-height)` + `overflow-y: auto`; было `overflow: hidden` —
+  длинный список уезжал за край экрана без прокрутки
+- ± стык рамок триггера и попапа по `data-popup-side` / `data-side`, а не всегда снизу:
+  у нижнего края экрана попап переворачивается наверх
+- ± `Select.List` между `Popup` и `Item` — роль `listbox` на своём элементе
+
+`select` — состояния и API:
+
+- ± база на `Field`, как батч 1: состояния с корня `[data-disabled|invalid|focused]`,
+  подпись `Select.Label`, ошибка `Field.Error`; появился проп `error`
+- ± `items={options}` в `Select.Root` — без него `Select.Value` рисовал сырое значение
+  вместо подписи выбранного пункта
+- ± `data-selected` (цвет) и `data-highlighted` (заливка) разведены: было одно правило,
+  и выбранный пункт пропадал, стоило увести подсветку
+- ± `SelectOption` получил `disabled`, `label` расширен до `ReactNode`
+- ± заливка триггера прозрачная (как у `Input`); `opacity: 0.5` у `disabled` →
+  `--color-control-text-disabled`
+- ± `Icon` со спрайтом → `ArrowIosDownOutlineIcon`, `width`/`height` → `size`
+
+`tabs`:
+
+- ± `data-orientation` читается на всех частях — вертикальный режим не работал вовсе,
+  хотя `orientation` был выставлен контролом в стори
+- ± рамка `border: 0 solid` + ширина нужной стороны: цвет живёт одним `border-color`
+  и не дублируется под каждую ориентацию
+- ± idle-подпись `dark-100` → `--color-text-secondary`: контраст ~2:1 на фоне страницы
+  не проходил; `disabled` → `--color-control-text-disabled` + `--color-border-disabled`
+  (первый потребитель токена)
+- ± `pointer-events: none` у `disabled` убран; фокус на общие `--focus-ring-*`
+  с отрицательным отступом (вкладки стоят вплотную, внешнее кольцо срезала бы соседняя)
+- ± высота — `min-height: var(--control-height-md)`; было `padding: 6px 24px 4px 23px`
+- ± неймспейс `Tabs` собирается в `index.ts`: объект-экспорт в `Tabs.tsx` ломает
+  `react-refresh/only-export-components`
+- \+ `--color-bg-accent-hover` / `--color-bg-accent-active` вместо `rgb(35 78 153 / 15%)`
+  и `rgb(115 165 255 / 15%)`; `--color-bg-accent-subtle` переименован в `-active`
+  (потребителей не имел)
+- − `Tabs.Indicator` — в исходнике задан `display: none`, то есть висел в API, не рисуя ничего
+- − `'use client'` у `Select` — своих хуков в обёртке нет, директива стоит на модулях Base UI
+- − стори с ручной подменой `hover`/`focus`/`pressed` (`Tabs.stories.module.css`) — тот же
+  случай, что у `RadioGroup` в батче 2
+
 ## Батч 4: `alert`, `modal`, `scroll`, `recaptcha`
 
 - ± `Icon` заменён на компоненты кита: `CloseOutlineIcon` (Alert, Modal),
@@ -90,4 +137,7 @@
 - `Modal` остался конфигурируемым (`title` пропом), а не композиционным
   (`<Modal.Header/>`) — против принципа 2 роадмапа. Перенос не переписывание;
   разбирать, когда появится модалка со своей шапкой
+- `alignItemWithTrigger={false}` у `Select` зашит — наружу не настраивается
+- `modal: true` у `Select.Root` (умолчание Base UI) блокирует прокрутку страницы,
+  пока список раскрыт — глазами не проверено
 - клавиатура и фокус во всех перенесённых компонентах глазами не проверены

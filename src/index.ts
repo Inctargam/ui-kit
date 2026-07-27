@@ -5,7 +5,7 @@
  */
 
 // Компоненты и их типы пропсов: Alert, Button, Card, Checkbox, Input, Modal,
-// RadioGroup, Recaptcha, Scroll, TextArea.
+// RadioGroup, Recaptcha, Scroll, Select, Tabs, TextArea.
 export * from './components'
 // Набор иконок: 90 компонентов, `IconProps` и union `IconName`.
 // Реэкспорт пофайловый, поэтому tree-shaking не ломается — потребитель
