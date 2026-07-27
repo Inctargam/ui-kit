@@ -1,0 +1,242 @@
+/* Все элементы навигации — одной высоты (--control-height-sm) и на одной шкале
+   отступов. Хардкод-цветов в исходнике было девять (#fff, #000, фолбэки вида
+   var(--color-light-100, #fff)) — здесь их нет ни одного. */
+
+.root {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* ─── Стрелки ─────────────────────────────── */
+
+/* Гашение выключенной стрелки цветом, а не opacity: прозрачность считается
+   от фона под элементом и уезжает вместе с ним. */
+.arrow {
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: var(--control-height-sm);
+  height: var(--control-height-sm);
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.arrow:disabled {
+  color: var(--color-control-text-disabled);
+  cursor: not-allowed;
+}
+
+/* ─── Номера страниц ──────────────────────── */
+
+.list {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Рамка есть у всех состояний (прозрачная в покое): иначе активная страница
+   с видимой рамкой была бы на 2px крупнее соседей. */
+.page {
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: var(--control-height-sm);
+  height: var(--control-height-sm);
+  padding-inline: var(--space-1);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-primary);
+  font-family: var(--font-base);
+  font-size: var(--font-size-regular-14);
+  font-weight: var(--font-weight-regular-14);
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+/* Текущая страница — инвертированная плашка. Наведение её не трогает:
+   кликать по ней некуда, goTo на том же номере выходит сразу. */
+.pageActive {
+  border-color: var(--color-bg-inverted);
+  background: var(--color-bg-inverted);
+  color: var(--color-text-inverted);
+}
+
+.dots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: var(--control-height-sm);
+  height: var(--control-height-sm);
+  color: var(--color-text-secondary);
+  font-family: var(--font-base);
+  font-size: var(--font-size-regular-14);
+  font-weight: var(--font-weight-regular-14);
+  line-height: 1;
+  user-select: none;
+}
+
+/* ─── Размер страницы ─────────────────────── */
+
+/* Своего margin нет: расстояние до номеров задаёт gap корня. */
+.perPage {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.perPageText {
+  color: var(--color-text-primary);
+  font-family: var(--font-base);
+  font-size: var(--font-size-regular-14);
+  font-weight: var(--font-weight-regular-14);
+  line-height: var(--line-height-regular-14);
+  white-space: nowrap;
+}
+
+/* Заливка прозрачная, как у Input: оформление держит рамка. Ширины нет —
+   триггер шириной по содержимому, а список подтягивается к нему через
+   --anchor-width, который Base UI кладёт на позиционер. */
+.selectTrigger {
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-1);
+  height: var(--control-height-sm);
+  padding-inline: var(--space-1);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-primary);
+  font-family: var(--font-base);
+  font-size: var(--font-size-regular-14);
+  font-weight: var(--font-weight-regular-14);
+  cursor: pointer;
+  transition: border-color var(--transition-fast);
+}
+
+.selectIcon {
+  display: flex;
+  align-items: center;
+  transition: transform var(--transition-fast);
+}
+
+/* Стрелка переворачивается на открытом списке: data-popup-open ставит Base UI. */
+.selectTrigger[data-popup-open] .selectIcon {
+  transform: rotate(180deg);
+}
+
+/* Список уезжает порталом в <body>, поэтому z-index обязателен: там он последний
+   ребёнок документа и без слоя проигрывает любому позиционированному элементу. */
+.selectPopup {
+  box-sizing: border-box;
+  z-index: var(--z-index-popup);
+  min-width: var(--anchor-width);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-elevated);
+  box-shadow: var(--shadow-popup);
+  outline: none;
+}
+
+.selectPopup[data-open] {
+  animation: popup-in var(--transition-fast) ease;
+}
+
+.selectPopup[data-closed] {
+  animation: popup-out var(--transition-fast) ease forwards;
+}
+
+.selectItem {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  padding: var(--space-2);
+  color: var(--color-text-primary);
+  font-family: var(--font-base);
+  font-size: var(--font-size-regular-14);
+  font-weight: var(--font-weight-regular-14);
+  cursor: pointer;
+  outline: none;
+  transition: background-color var(--transition-fast);
+}
+
+/* data-highlighted — пункт под курсором или под клавиатурной навигацией,
+   data-selected — текущее значение. Первый красит фон, второй — текст. */
+.selectItem[data-selected] {
+  color: var(--color-accent);
+}
+
+.selectItem[data-highlighted] {
+  background: var(--color-bg-hover);
+}
+
+/* ─── Фокус и наведение ───────────────────── */
+
+/* Оба блока — общие на все интерактивные элементы компонента, и оба стоят после
+   базовых правил: селекторы состояний специфичнее, и выше базы их не перебить
+   (no-descending-specificity). Наведение последним — оно специфичнее фокуса. */
+.arrow:focus-visible,
+.page:focus-visible,
+.selectTrigger:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.arrow:hover:not(:disabled) {
+  color: var(--color-text-secondary);
+}
+
+/* Текущую страницу наведение не трогает: кликать по ней некуда, goTo на том же
+   номере выходит сразу. */
+.page:hover:not(.pageActive) {
+  border-color: var(--color-bg-hover);
+  background: var(--color-bg-hover);
+}
+
+.selectTrigger:hover {
+  border-color: var(--color-border-hover);
+}
+
+/* ─── Анимация списка ─────────────────────── */
+
+/* Имена в kebab-case: CSS Modules локализуют имя keyframes, но не камелизируют
+   его — в исходнике `animation: popupIn` не находил `@keyframes popup-in`
+   и анимация не проигрывалась вовсе. */
+@keyframes popup-in {
+  from {
+    transform: translateY(calc(-1 * var(--space-1)));
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes popup-out {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  to {
+    transform: translateY(calc(-1 * var(--space-1)));
+    opacity: 0;
+  }
+}

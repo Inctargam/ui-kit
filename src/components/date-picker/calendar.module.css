@@ -1,0 +1,157 @@
+/* Календарь — внутренность DatePicker: рисуется только в его попапе, наружу
+   не экспортируется. Ширину задаёт сетка (7 × --control-height-md), поэтому
+   фиксированных размеров здесь нет ни у одного контейнера. */
+
+.calendar {
+  box-sizing: border-box;
+  padding: var(--space-4);
+  background-color: var(--color-bg-elevated);
+}
+
+/* ─── Шапка ───────────────────────────────── */
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-4);
+  min-height: var(--control-height-md);
+  margin-bottom: var(--space-3);
+  padding-inline-start: var(--space-2);
+}
+
+.monthLabel {
+  color: var(--color-text-primary);
+  font-family: var(--font-base);
+  font-size: var(--font-size-bold-16);
+  font-weight: var(--font-weight-bold-16);
+  line-height: var(--line-height-bold-16);
+}
+
+.navButtons {
+  display: flex;
+  align-items: center;
+}
+
+/* Кнопка листания месяца: круглая, размером с ячейку дня. Направление состояний
+   как у остальных нейтральных контролов кита — наведение светлее покоя.
+   В исходнике было наоборот (dark-100 в покое, dark-300 на наведении). */
+.navBtn {
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: var(--control-height-md);
+  height: var(--control-height-md);
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-control-bg);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.navBtn:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.navBtn:hover {
+  background-color: var(--color-control-bg-hover);
+}
+
+/* ─── Сетка ───────────────────────────────── */
+
+/* Колонка шириной в ячейку дня: та же величина, что высота кнопки-дня,
+   поэтому ячейка выходит квадратной без второго числа. */
+.weekdays,
+.week {
+  display: grid;
+  grid-template-columns: repeat(7, var(--control-height-md));
+}
+
+.weekdays {
+  height: var(--space-8);
+}
+
+.weekday {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--color-text-secondary);
+  font-family: var(--font-base);
+  font-size: var(--font-size-medium-14);
+  font-weight: var(--font-weight-medium-14);
+  line-height: var(--line-height-medium-14);
+}
+
+/* ─── День ────────────────────────────────── */
+
+/* Пустые ячейки до первого числа месяца рисуются тем же классом на <span>:
+   размер и место в сетке им нужны, состояния — нет. */
+.day {
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: var(--control-height-md);
+  height: var(--control-height-md);
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-pill);
+  background: none;
+  color: var(--color-text-primary);
+  font-family: var(--font-base);
+  font-size: var(--font-size-regular-16);
+  font-weight: var(--font-weight-regular-16);
+  line-height: var(--line-height-regular-16);
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.day:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+
+  /* Без отступа: соседние ячейки стоят вплотную, и кольцо со штатными 2px
+     залезло бы на соседний день. */
+  outline-offset: 0;
+}
+
+.dayWeekend {
+  color: var(--color-text-weekend);
+}
+
+.dayToday {
+  color: var(--color-accent);
+  font-weight: var(--control-font-weight);
+}
+
+/* Выбранный день и диапазон. Скругление у краёв диапазона одностороннее —
+   середина остаётся прямоугольной, чтобы ячейки слились в одну полосу. */
+.daySelected,
+.dayRangeStart,
+.dayRangeEnd,
+.dayRangeMiddle {
+  background-color: var(--color-accent-muted);
+}
+
+.dayRangeStart {
+  border-radius: var(--radius-pill) 0 0 var(--radius-pill);
+}
+
+.dayRangeEnd {
+  border-radius: 0 var(--radius-pill) var(--radius-pill) 0;
+}
+
+.dayRangeMiddle {
+  border-radius: 0;
+}
+
+/* Наведение идёт последним: правило самое специфичное в блоке, и выше него
+   выбранные состояния из :not() уже не перебить (no-descending-specificity). */
+.day:hover:not(.daySelected, .dayRangeStart, .dayRangeEnd, .dayRangeMiddle) {
+  background-color: var(--color-accent-muted-hover);
+}
