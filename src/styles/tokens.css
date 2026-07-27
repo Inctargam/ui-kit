@@ -193,6 +193,11 @@
      (primary-900, dark-500), тёмно-серый на ней тонет. */
   --color-control-text-disabled: var(--color-dark-100);
 
+  /* Галочка чекбокса поверх заливки disabled+checked (--color-control-text-disabled).
+     Оба они серые, но чуть разного тона: сольются в одно пятно без отдельного токена —
+     заливке и глифу поверх неё нужен контраст. Потребитель один — намеренно узкий. */
+  --color-control-indicator-disabled: var(--color-light-700);
+
   /* Текст */
   --color-text-primary: var(--color-light-100);
   --color-text-secondary: var(--color-light-900);

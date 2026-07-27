@@ -1,0 +1,79 @@
+.group {
+  display: inline-flex;
+  color: var(--color-text-primary);
+  font-family: var(--font-base);
+  font-size: var(--font-size-regular-14);
+  line-height: var(--line-height-regular-14);
+}
+
+.vertical {
+  flex-direction: column;
+}
+
+.horizontal {
+  flex-direction: row;
+  gap: var(--space-2);
+}
+
+.item {
+  composes: interactiveArea from '../shared/selectionControl.module.css';
+}
+
+.item[data-disabled] {
+  cursor: default;
+}
+
+.radio {
+  composes: indicatorBox from '../shared/selectionControl.module.css';
+  color: var(--color-text-primary);
+  outline: none;
+}
+
+/* Кольцо фокуса — на самой кнопке радио (24×24), а не на всём ряду: фокус
+   у Base UI ловит `Radio.Root`, подпись рядом не фокусируется, как и у нативного
+   input[type=radio]. Общий приём кита — outline, а не третий цвет подложки. */
+.radio:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.radio[data-disabled] {
+  color: var(--color-control-text-disabled);
+}
+
+/* Видимое кольцо 18×18 внутри 24×24 индикатора — тот же приём и размер,
+   что у квадрата Checkbox, только radius-pill вместо radius-sm. */
+.radio::after {
+  content: '';
+  position: relative;
+  z-index: 1;
+  width: 18px;
+  height: 18px;
+  border: 2px solid currentcolor;
+  border-radius: var(--radius-pill);
+}
+
+.dot {
+  position: absolute;
+  z-index: 2;
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-pill);
+  background-color: currentcolor;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-fast);
+}
+
+.radio[data-checked] .dot {
+  opacity: 1;
+}
+
+.label {
+  z-index: 1;
+  min-width: 0;
+}
+
+.item[data-disabled] .label {
+  color: var(--color-text-disabled);
+}

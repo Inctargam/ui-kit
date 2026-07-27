@@ -6,6 +6,10 @@ const stylelintConfig = {
   rules: {
     // CSS Modules: классы в camelCase, чтобы обращаться как styles.buttonPrimary без кавычек
     'selector-class-pattern': '^[a-z][a-zA-Z0-9]+$',
+    // composes — синтаксис CSS Modules, обычный CSS о нём не знает: property-no-unknown
+    // считает его опечаткой, а value-keyword-case — что имя класса нужно писать строчными.
+    'property-no-unknown': [true, { ignoreProperties: ['composes'] }],
+    'value-keyword-case': ['lower', { ignoreProperties: ['composes'] }],
     'declaration-no-important': true,
     'declaration-block-no-duplicate-properties': true,
     // transition: all перерисовывает всё подряд и ломает производительность анимаций

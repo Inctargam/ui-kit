@@ -1,0 +1,93 @@
+.root {
+  composes: interactiveArea from '../shared/selectionControl.module.css';
+  color: var(--color-text-primary);
+  font-family: var(--font-base), sans-serif;
+  font-size: var(--font-size-regular-14);
+  font-weight: var(--font-weight-regular-14);
+  line-height: var(--line-height-regular-14);
+  user-select: none;
+}
+
+/* Кольцо фокуса — общий для кита приём (outline, не перекраска), а не третий цвет
+   подложки состояний. Подложка отвечает только за hover/active. */
+.root:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.root[data-disabled] {
+  color: var(--color-text-disabled);
+}
+
+/* Специфичность через .root.iconOnly, а не одиночный класс: иначе побеждает то
+   правило, что окажется позже в собранном dist/styles.css, а порядок там зависит
+   от порядка импортов CSS-модулей, а не от порядка классов в JSX. */
+.root.iconOnly {
+  gap: 0;
+  min-height: auto;
+  padding: 0;
+}
+
+.control {
+  composes: indicatorBox from '../shared/selectionControl.module.css';
+  color: var(--color-text-primary);
+}
+
+/* Видимый квадрат 18×18 внутри 24×24 индикатора; размер и позиция общие
+   с RadioGroup через indicatorBox, рамку и заливку меняют состояния ниже. */
+.control::after {
+  content: '';
+  position: relative;
+  z-index: 1;
+  width: 18px;
+  height: 18px;
+  border: 2px solid currentcolor;
+  border-radius: var(--radius-sm);
+  background-color: transparent;
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+.root[data-checked] .control::after {
+  background-color: var(--color-text-primary);
+}
+
+.root[data-disabled] .control {
+  color: var(--color-control-text-disabled);
+}
+
+.root[data-disabled][data-checked] .control::after {
+  background-color: var(--color-control-text-disabled);
+}
+
+.checkmark {
+  position: absolute;
+  z-index: 2;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 18px;
+  height: 18px;
+  pointer-events: none;
+}
+
+.checkmark::before {
+  content: '';
+  width: 10px;
+  height: 6px;
+  margin-bottom: 2px;
+  border-bottom: 2px solid var(--color-text-inverted);
+  border-left: 2px solid var(--color-text-inverted);
+  transform: rotate(-45deg);
+}
+
+/* Заливка квадрата уже потемнела до --color-control-text-disabled — глифу нужен
+   другой тон, иначе он потеряется на собственном фоне. */
+.root[data-disabled][data-checked] .checkmark::before {
+  border-color: var(--color-control-indicator-disabled);
+}
+
+.label {
+  min-width: 0;
+}
