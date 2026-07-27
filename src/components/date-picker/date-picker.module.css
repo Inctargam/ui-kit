@@ -1,0 +1,123 @@
+/* База контрола формы — та же, что у input.module.css и textarea.module.css:
+   подпись сверху, рамка вокруг значения, текст ошибки снизу, состояния читаются
+   с корня Field.Root. Отличие одно: «поле» здесь кнопка, открывающая календарь. */
+
+.root {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* ─── Подпись ─────────────────────────────── */
+
+.label {
+  color: var(--color-text-secondary);
+  font-family: var(--font-base);
+  font-size: var(--font-size-regular-14);
+  font-weight: var(--font-weight-regular-14);
+  line-height: var(--line-height-regular-14);
+}
+
+.root[data-disabled] .label {
+  color: var(--color-control-text-disabled);
+}
+
+/* ─── Кнопка со значением ─────────────────── */
+
+/* Обёртка держит систему координат для попапа: он позиционируется от кнопки,
+   а не от корня — иначе подпись сдвигала бы календарь вниз. */
+.triggerWrapper {
+  position: relative;
+}
+
+/* Высоту держит min-height, а не вертикальный паддинг: рамка есть всегда,
+   и от неё контрол не должен становиться выше. */
+.trigger {
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  min-height: var(--control-height-md);
+  padding-inline: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: transparent;
+  color: var(--color-text-primary);
+  font-family: var(--font-base);
+  font-size: var(--font-size-regular-16);
+  font-weight: var(--font-weight-regular-16);
+  line-height: var(--line-height-regular-16);
+  cursor: pointer;
+  transition: border-color var(--transition-fast);
+}
+
+.trigger:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.root[data-invalid] .trigger {
+  border-color: var(--color-border-danger);
+}
+
+/* Рамку выключенный контрол не меняет — гасится только содержимое.
+   cursor наследуемый, поэтому одного правила на кнопке хватает и её начинке. */
+.root[data-disabled] .trigger {
+  color: var(--color-control-text-disabled);
+  cursor: not-allowed;
+}
+
+/* Наведение идёт последним: правило самое специфичное в блоке, и выше него
+   состояния из :not() уже не перебить (no-descending-specificity). */
+.root:not([data-disabled], [data-invalid]) .trigger:hover {
+  border-color: var(--color-border-hover);
+}
+
+/* ─── Значение и иконка ───────────────────── */
+
+.value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.placeholder {
+  color: var(--color-text-placeholder);
+}
+
+.root[data-disabled] .placeholder {
+  color: var(--color-control-text-disabled);
+}
+
+/* Цвет наследуется от кнопки, поэтому выключенное и ошибочное состояния
+   иконке отдельных правил не требуют. */
+.icon {
+  flex-shrink: 0;
+}
+
+/* ─── Попап с календарём ──────────────────── */
+
+/* Попап лежит в потоке страницы, а не в портале: закрытие по клику мимо ведёт
+   сам компонент, и слушателю нужен один общий корень. Плата — z-index:
+   без него календарь проиграет любому позиционированному соседу. */
+.popup {
+  position: absolute;
+  top: calc(100% + var(--space-1));
+  left: 0;
+  z-index: var(--z-index-popup);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-popup);
+}
+
+/* ─── Ошибка ──────────────────────────────── */
+
+.error {
+  color: var(--color-text-danger);
+  font-family: var(--font-base);
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-small);
+  line-height: var(--line-height-small);
+}

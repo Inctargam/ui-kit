@@ -5,8 +5,37 @@
 Компоненты выносятся из `shared/ui` приложения `remark-gram` в отдельный переиспользуемый
 пакет.
 
-**Статус:** этап 5 — каркас, токены, 90 иконок, сборка пакета и Storybook готовы.
-Компоненты переезжают по одному: перенесены `Button` и `Card`, осталось 13.
+**Статус:** этап 5 закрыт — каркас, токены, 90 иконок, сборка пакета и Storybook готовы,
+компоненты перенесены. Что изменилось у каждого против исходника — в `MIGRATIONS.md`.
+
+## Компоненты
+
+| Компонент    | Основа                     | Коротко                                                                 |
+| ------------ | -------------------------- | ----------------------------------------------------------------------- |
+| `Button`     | Base UI `Button`           | `variant`: `primary` \| `secondary` \| `outline` \| `text`              |
+| `Card`       | `<div>`                    | поверхность-панель, `padding`: `none` \| `small` \| `medium` \| `large` |
+| `Checkbox`   | Base UI `Checkbox`         | подпись — `children`, клик ловит весь ряд                               |
+| `DatePicker` | Base UI `Field`            | `mode`: одна дата или диапазон, календарь внутри, `label` и `error`     |
+| `Input`      | Base UI `Field`            | `text` / `password` / `search`, показ пароля, `label` и `error`         |
+| `Pagination` | `<nav>` + Base UI `Select` | номера с многоточиями, стрелки, выбор размера страницы                  |
+| `RadioGroup` | Base UI `RadioGroup`       | список через `options`, `direction`: `vertical` \| `horizontal`         |
+| `TextArea`   | Base UI `Field`            | высота через `rows`, `resize: vertical`, `label` и `error`              |
+
+Пропсы, которых нет в таблице, — нативные: `...rest` уходит на корневой элемент целиком,
+включая `ref` (в React 19 это обычный проп). Непустой `error` у полей формы сам включает
+состояние `invalid` — отдельного пропа под него нет.
+
+Наружу не экспортируется:
+
+- `Calendar` — внутренность `DatePicker`, а не второй компонент кита. Своего продуманного
+  API у него пока нет (месяцем снаружи не поуправлять, нет `min`/`max` и локалей), а всё
+  экспортированное приходится поддерживать;
+- `components/shared/selectionControl.module.css` — общие классы `Checkbox` и `RadioGroup`,
+  подключаются через `composes` внутри кита;
+- CSS-модули компонентов: имена классов при сборке хешируются, опираться на них снаружи
+  нельзя. Стили приезжают одним `styles.css`;
+- внутренние хелперы (сетка дней календаря, расчёт видимых номеров страниц) и стори —
+  `tsconfig.build.json` последние не собирает.
 
 ## Разработка
 
@@ -88,13 +117,68 @@ tsconfig.build.json конфиг для генерации .d.ts (emitDeclaratio
 Проверка сборки без публикации: `pnpm build && pnpm pack` — тарбол ставится в тестовый
 проект как `file:` зависимость.
 
-## Подключение
+## Установка
+
+Пакет пока не опубликован: реестр — публичный npm, версионирование — Changesets
+(этапы 7–8 роадмапа). До публикации ставится тарболом:
+
+```bash
+pnpm build && pnpm pack           # в репозитории кита
+pnpm add file:../ui-kit/remark-gram-ui-kit-0.0.0.tgz   # в приложении
+```
+
+`react`, `react-dom` и `@base-ui/react` — peer-зависимости, их ставит приложение.
+Вторая копия React означала бы «Invalid hook call», поэтому в бандл кита они не входят.
+
+```bash
+pnpm add react react-dom @base-ui/react
+```
+
+## Стили
+
+Два импорта, один раз на всё приложение — в корневом layout (Next App Router) или
+в точке входа:
 
 ```tsx
-// один раз на приложение: токены обязательны, reset по желанию
-import '@remark-gram/ui-kit/styles/tokens.css'
-import '@remark-gram/ui-kit/styles.css'
+import '@remark-gram/ui-kit/styles/tokens.css' // обязательно
+import '@remark-gram/ui-kit/styles.css' // обязательно
+import '@remark-gram/ui-kit/styles/reset.css' // по желанию, он глобальный
+```
 
+Без `tokens.css` компоненты остаются без цветов и размеров: всё оформление внутри —
+это `var(--…)`, и переменные брать неоткуда. `styles.css` — собранные CSS Modules
+всех компонентов; порядок этих двух импортов роли не играет, они не пересекаются
+по селекторам.
+
+`reset.css` глобальный — он трогает не только кит. Компоненты на него не рассчитывают:
+кнопки-крестики и триггеры обнуляют себе `border` / `background` / `padding` сами.
+
+## Иконки
+
+90 штук, именованные экспорты из корня пакета. Реестра `name -> компонент` наружу нет
+намеренно: он утащил бы в бандл весь набор и убил бы tree-shaking.
+
+```tsx
+import { BellOutlineIcon, SearchOutlineIcon } from '@remark-gram/ui-kit'
+
+;<BellOutlineIcon size={24} />
+```
+
+Размер — проп `size` (число или строка, по умолчанию 24), он идёт и в `width`, и в `height`.
+Цвет свой иконка не задаёт: `fill="currentColor"`, то есть красится от `color` родителя.
+Пропа под цвет нет — это осознанно, иначе рядом с семантикой токенов появился бы
+второй способ красить.
+
+Часть иконок разноцветная по природе (бейджи, логотипы, флаги). Такие места зашиты
+токеном с HEX-фолбэком — `fill="var(--color-danger-500, #cc1439)"`: с `tokens.css`
+цвет идёт от темы, без него иконка всё равно нарисуется правильно.
+`currentColor` этих кусков не касается.
+
+## Примеры
+
+Карточка с кнопкой:
+
+```tsx
 import { BellOutlineIcon, Button, Card } from '@remark-gram/ui-kit'
 
 export const Example = () => (
@@ -107,9 +191,73 @@ export const Example = () => (
 )
 ```
 
-Без `tokens.css` компоненты остаются без цветов и размеров: всё оформление внутри —
-это `var(--…)`. Иконки цвет берут от `color` родителя, своего пропа под цвет у них нет.
+Поля формы. `label` и `error` компонент связывает сам — `htmlFor` и `aria-describedby`
+проставляет `Field` из Base UI:
 
-## Установка как пакета
+```tsx
+import { Checkbox, Input, RadioGroup, TextArea } from '@remark-gram/ui-kit'
 
-Пока не опубликован. Реестр — публичный npm, версионирование — Changesets (этапы 7–8 роадмапа).
+export const Form = () => (
+  <form>
+    <Input label="Email" type="email" error="Неверный формат" />
+    <Input label="Пароль" type="password" />
+    <TextArea label="О себе" rows={4} />
+    <RadioGroup
+      name="plan"
+      defaultValue="free"
+      options={[
+        { label: 'Бесплатный', value: 'free' },
+        { label: 'Платный', value: 'paid' },
+      ]}
+    />
+    <Checkbox name="terms">Согласен с условиями</Checkbox>
+  </form>
+)
+```
+
+Дата и диапазон. `DatePicker` управляемый: без `value` и `onChange` выбор никуда
+не запишется:
+
+```tsx
+import { DatePicker } from '@remark-gram/ui-kit'
+import { useState } from 'react'
+
+export const Dates = () => {
+  const [day, setDay] = useState<Date>()
+  const [range, setRange] = useState<{ from: Date; to: Date }>()
+
+  return (
+    <>
+      <DatePicker label="Дата" placeholder="Выберите дату" value={day} onChange={(v) => setDay(v as Date)} />
+      <DatePicker mode="range" label="Период" value={range} onChange={(v) => setRange(v as { from: Date; to: Date })} />
+    </>
+  )
+}
+```
+
+Пагинация — тоже полностью управляемая, своего состояния не держит. Смену размера
+страницы обычно сопровождают возвратом на первую: номер прежней страницы в новой
+разбивке ничего не значит.
+
+```tsx
+import { Pagination } from '@remark-gram/ui-kit'
+import { useState } from 'react'
+
+export const List = ({ total }: { total: number }) => {
+  const [page, setPage] = useState(1)
+  const [perPage, setPerPage] = useState(10)
+
+  return (
+    <Pagination
+      currentPage={page}
+      totalPages={Math.ceil(total / perPage)}
+      itemsPerPage={perPage}
+      onPageChange={setPage}
+      onItemsPerPageChange={(value) => {
+        setPerPage(value)
+        setPage(1)
+      }}
+    />
+  )
+}
+```
