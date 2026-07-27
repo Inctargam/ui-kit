@@ -161,6 +161,12 @@
   --radius-pill: 9999px;
   --transition-fast: 150ms;
 
+  /* Слой модального окна. Base UI кладёт попап порталом в <body> и z-index не ставит
+     вовсе — без токена подложка и окно лежат со `z-index: auto` последними детьми
+     body и проигрывают любому позиционированному элементу потребителя. Значение
+     с запасом снизу: шапки и липкие панели приложения обычно живут в первой сотне. */
+  --z-index-modal: 1100;
+
   /* ═══ СЕМАНТИКА ═════════════════════════════ */
 
   /* Поверхности. Иерархия по «высоте»: страница → панель → всплывающий слой. */
@@ -229,6 +235,12 @@
   --color-accent-active: var(--color-primary-700);
   --color-accent-disabled: var(--color-primary-900);
 
+  /* Приглушённая заливка под акцентом — пара к --color-danger-bg и остальным
+     статусным. Потребитель — информационная плашка Alert: у неё тот же приём
+     «заливка 900 + рамка 500», что у error / success / warning.
+     Значение совпадает с --color-accent-disabled случайно: роли разные. */
+  --color-accent-bg: var(--color-primary-900);
+
   /* Статусы: пара «контур/текст» + приглушённая заливка для алертов. */
   --color-danger: var(--color-danger-500);
   --color-danger-bg: var(--color-danger-900);
@@ -236,6 +248,12 @@
   --color-warning-bg: var(--color-warning-900);
   --color-success: var(--color-success-500);
   --color-success-bg: var(--color-success-900);
+
+  /* Полоса прокрутки. Отдельно от --color-control-bg*: у ползунка наведение
+     светлеет до light-900, а у контрола идёт вниз по тёмной шкале — общей парой
+     эти два движения не описать. Потребитель один — Scroll. */
+  --color-scrollbar-thumb: var(--color-dark-300);
+  --color-scrollbar-thumb-hover: var(--color-light-900);
 
   /* Фокус. Кольцо рисуется через outline, чтобы не влиять на размеры элемента. */
   --color-focus-ring: var(--color-primary-700);

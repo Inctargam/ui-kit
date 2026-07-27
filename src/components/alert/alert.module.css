@@ -1,0 +1,75 @@
+/* Рамка объявлена сразу всем вариантам (1px solid transparent), вариант меняет
+   только её цвет: иначе плашка без цветной рамки была бы на 2px ниже остальных.
+   box-sizing свой — reset.css потребитель подключать не обязан. */
+.root {
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-3) var(--space-6);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-base);
+}
+
+/* Текст лежит на цветной заливке варианта, а не на фоне страницы, — поэтому
+   --color-text-on-accent, а не --color-text-primary. */
+.content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--color-text-on-accent);
+  font-size: var(--font-size-regular-16);
+  font-weight: var(--font-weight-regular-16);
+  line-height: var(--line-height-regular-16);
+}
+
+/* Без крестика плашка симметрична: содержимое занимает всю ширину и центрируется. */
+.centered .content {
+  justify-content: center;
+  width: 100%;
+  text-align: center;
+}
+
+/* Кнопка обнуляется здесь же: на reset.css потребителя полагаться нельзя.
+   Цвет наследуется от .content — иконке хватает currentColor. */
+.closeButton {
+  display: inline-flex;
+  flex-shrink: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--color-text-on-accent);
+  cursor: pointer;
+}
+
+.closeButton:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* ─── Варианты ────────────────────────────── */
+
+.error {
+  border-color: var(--color-danger);
+  background-color: var(--color-danger-bg);
+}
+
+.success {
+  border-color: var(--color-success);
+  background-color: var(--color-success-bg);
+}
+
+.warning {
+  border-color: var(--color-warning);
+  background-color: var(--color-warning-bg);
+}
+
+/* В исходнике у info рамки не было вовсе: border: 1px solid без цвета брал
+   currentColor и рисовал белую. Приведено к общему виду — заливка 900, рамка 500. */
+.info {
+  border-color: var(--color-accent);
+  background-color: var(--color-accent-bg);
+}

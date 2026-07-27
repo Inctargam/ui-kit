@@ -1,0 +1,86 @@
+/* Стили витрины: рамка вокруг области прокрутки и её содержимое. В пакет не едут.
+   Типографику задают здесь, а не в scroll.module.css — контейнер прокрутки
+   стиль текста внутри себя не навязывает. */
+
+.vertical {
+  width: 320px;
+  height: 240px;
+}
+
+.list {
+  display: grid;
+  font-family: var(--font-base);
+}
+
+.item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-regular-14);
+  line-height: var(--line-height-regular-14);
+}
+
+.time {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-small);
+  line-height: var(--line-height-small);
+}
+
+.horizontal {
+  width: 320px;
+  height: 72px;
+}
+
+.row {
+  display: flex;
+  gap: var(--space-2);
+  width: max-content;
+  padding: var(--space-3) var(--space-4);
+}
+
+.badge {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 72px;
+  height: var(--space-8);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+  font-family: var(--font-base);
+  font-size: var(--font-size-small);
+  line-height: var(--line-height-small);
+}
+
+.gridFrame {
+  width: 320px;
+  height: 220px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(10, 56px);
+  gap: var(--space-2);
+  width: max-content;
+  padding: var(--space-4);
+}
+
+.cell {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 56px;
+  height: var(--space-10);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+  font-family: var(--font-base);
+  font-size: var(--font-size-small);
+  line-height: var(--line-height-small);
+}

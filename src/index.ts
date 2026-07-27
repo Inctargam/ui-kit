@@ -4,7 +4,8 @@
  * Наполняется по мере переноса компонентов (этап 5 роадмапа).
  */
 
-// Компоненты и их типы пропсов: Button, Card, Checkbox, Input, RadioGroup, TextArea.
+// Компоненты и их типы пропсов: Alert, Button, Card, Checkbox, Input, Modal,
+// RadioGroup, Recaptcha, Scroll, TextArea.
 export * from './components'
 // Набор иконок: 90 компонентов, `IconProps` и union `IconName`.
 // Реэкспорт пофайловый, поэтому tree-shaking не ломается — потребитель

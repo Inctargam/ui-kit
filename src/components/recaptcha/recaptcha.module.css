@@ -1,0 +1,165 @@
+/* Виджет чужой: размеры, шрифт и цвета самого чекбокса заданы гайдлайнами Google
+   и на токены кита не переводятся — тот же приём, что у бренд-иконок
+   (`colorOverrides` в scripts/icons/config.mjs). Токены кита стоят там, где говорит
+   наша дизайн-система: поверхность виджета в тёмной теме, ошибка, кольцо фокуса. */
+
+.wrapper {
+  box-sizing: border-box;
+  position: relative;
+  display: inline-block;
+  width: 300px;
+  font-family: Roboto, var(--font-base), sans-serif;
+}
+
+/* Рамка ошибки шире виджета: сообщение снизу лежит внутри неё. */
+.wrapperError {
+  width: 314px;
+  min-height: 124px;
+  padding: 8px 7px 34px;
+  border: 1px solid var(--color-border-danger);
+}
+
+.root {
+  box-sizing: border-box;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 300px;
+  min-height: 79px;
+  padding: var(--space-3) var(--space-5);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+  font: inherit;
+  cursor: pointer;
+}
+
+/* Фокус приходится ловить самим: role="checkbox" на <div> нативного кольца не даёт. */
+.root:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.root[aria-disabled='true'] {
+  cursor: default;
+}
+
+.challenge {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+/* Квадрат чекбокса — часть чужого виджета: белая коробка с серой рамкой. */
+.checkbox {
+  position: relative;
+  display: inline-flex;
+  flex: 0 0 auto;
+  justify-content: center;
+  align-items: center;
+  width: 20px;
+  height: 20px;
+  border: 1px solid #b7b7b7;
+  border-radius: 1px;
+  background-color: #fff;
+}
+
+.checked .checkbox,
+.loading .checkbox {
+  border-color: transparent;
+  background-color: transparent;
+}
+
+.default:hover .checkbox,
+.error:hover .checkbox,
+.expired:hover .checkbox {
+  border-color: #9d9d9d;
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: normal;
+  white-space: nowrap;
+}
+
+.brand {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  align-items: center;
+  width: 50px;
+  line-height: normal;
+}
+
+.logo {
+  display: block;
+  margin-bottom: var(--space-1);
+}
+
+.brandName {
+  font-size: 8px;
+  font-weight: 500;
+}
+
+.links {
+  margin-top: 1px;
+  font-size: 6px;
+  font-weight: 500;
+}
+
+/* Зелёная галочка Google, не --color-success кита: она часть их марки. */
+.checkmark {
+  position: absolute;
+  color: #14b34b;
+}
+
+.spinner {
+  width: 17px;
+  height: 17px;
+  border: 3px solid transparent;
+  border-top-color: var(--color-accent);
+  border-left-color: var(--color-accent);
+  border-radius: var(--radius-pill);
+  transform: rotate(45deg);
+  animation: spin 0.9s linear infinite;
+}
+
+/* Сообщения — наши, не Google: цвет из семантики. Размер 10px в шкале кита
+   отсутствует, но и не должен: это подпись внутри чужого виджета. */
+.topMessage {
+  position: absolute;
+  top: 3px;
+  left: 16px;
+  display: block;
+  max-width: 190px;
+  color: var(--color-text-danger);
+  font-size: 10px;
+  font-weight: 400;
+  line-height: normal;
+  text-align: left;
+}
+
+/* Сообщение сверху занимает первую строку — содержимое прижимается вниз. */
+.expired {
+  align-items: flex-end;
+}
+
+.bottomMessage {
+  position: absolute;
+  bottom: 11px;
+  left: 8px;
+  margin: 0;
+  color: var(--color-text-danger);
+  font-size: 10px;
+  font-weight: 400;
+  line-height: normal;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(405deg);
+  }
+}

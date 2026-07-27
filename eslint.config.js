@@ -12,7 +12,9 @@ import globals from 'globals'
 import tseslint from 'typescript-eslint'
 
 export default defineConfig([
-  globalIgnores(['dist', 'storybook-static', 'coverage']),
+  // .claude — рабочие каталоги агента, в том числе git-воркри с копией репозитория:
+  // без игнора линт видит два кандидата в tsconfigRootDir и падает на разборе.
+  globalIgnores(['dist', 'storybook-static', 'coverage', '.claude']),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
