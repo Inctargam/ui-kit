@@ -1,0 +1,76 @@
+/* Подложка. Полупрозрачный слой уже есть в токенах (--color-bg-overlay, color-mix
+   от dark-900): в исходнике то же самое собиралось вручную из сплошного цвета
+   и opacity: 0.6 — приём, который вдобавок гасил бы содержимое, будь оно внутри.
+   pointer-events: none снят: перехват кликов вне модалки Base UI берёт на себя,
+   а с ним клик мимо попапа доставался бы элементам страницы под подложкой. */
+.backdrop {
+  position: fixed;
+  z-index: var(--z-index-modal);
+  background: var(--color-bg-overlay);
+  inset: 0;
+}
+
+/* Попап того же z-index, что подложка: в DOM он идёт следом и потому лежит выше.
+   438px — ширина из макета; max-width держит её в пределах узкого экрана. */
+.popup {
+  box-sizing: border-box;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: var(--z-index-modal);
+  width: 438px;
+  max-width: calc(100vw - var(--space-8));
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-elevated);
+  font-family: var(--font-base);
+  transform: translate(-50%, -50%);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) var(--space-6);
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* Вес брался из --font-weight-bold, которого в шкале типографики нет вовсе:
+   правило молча отваливалось и заголовок рисовался нормальным. Пара к h1 — h1. */
+.title {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-h1);
+  font-weight: var(--font-weight-h1);
+  line-height: var(--line-height-h1);
+}
+
+/* Кнопку обнуляем здесь же: на reset.css потребителя полагаться нельзя. */
+.close {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: var(--icon-size-md);
+  height: var(--icon-size-md);
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.close:hover {
+  color: var(--color-accent-hover);
+}
+
+.close:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* 30px снизу-сверху в исходнике в сетку 4pt не ложились — 32/36 по шкале. */
+.body {
+  padding: var(--space-8) var(--space-6) var(--space-9);
+  color: var(--color-text-primary);
+}
