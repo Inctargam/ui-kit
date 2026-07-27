@@ -1,0 +1,201 @@
+/* Триггер и подпись повторяют базу контрола формы из input.module.css: те же роли,
+   те же токены, состояния читаются с корня Field.Root. Попап живёт отдельно — он
+   уезжает порталом в <body> и в поддерево .root не входит, поэтому его правила
+   не могут висеть на .root[data-*] и стоят самостоятельными классами. */
+
+.root {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* ─── Подпись ─────────────────────────────── */
+
+.label {
+  color: var(--color-text-secondary);
+  font-family: var(--font-base);
+  font-size: var(--font-size-regular-14);
+  font-weight: var(--font-weight-regular-14);
+  line-height: var(--line-height-regular-14);
+}
+
+.root[data-disabled] .label {
+  color: var(--color-control-text-disabled);
+}
+
+/* ─── Триггер ─────────────────────────────── */
+
+/* Высоту держит min-height, а не вертикальный паддинг: содержимое центрируется
+   флексом, и триггер не разъезжается от стрелки. box-sizing свой — reset.css
+   потребитель подключать не обязан. */
+.trigger {
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  min-height: var(--control-height-md);
+  padding-inline: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: transparent;
+  color: var(--color-text-primary);
+  font-family: var(--font-base);
+  font-size: var(--font-size-regular-16);
+  font-weight: var(--font-weight-regular-16);
+  line-height: var(--line-height-regular-16);
+  cursor: pointer;
+  transition: border-color var(--transition-fast);
+}
+
+.trigger:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* Открытый список и триггер по макету — одна «простыня»: общая рамка и сомкнутые
+   углы на стыке. Сторону стыка даёт data-popup-side, а не предположение «снизу»:
+   у нижнего края экрана попап переворачивается наверх, и гасить скругления
+   пришлось бы с другой стороны. */
+.trigger[data-popup-open] {
+  border-color: var(--color-border-strong);
+}
+
+.trigger[data-popup-open][data-popup-side='bottom'] {
+  border-end-start-radius: 0;
+  border-end-end-radius: 0;
+}
+
+.trigger[data-popup-open][data-popup-side='top'] {
+  border-start-start-radius: 0;
+  border-start-end-radius: 0;
+}
+
+.root[data-invalid] .trigger {
+  border-color: var(--color-border-danger);
+}
+
+/* Рамку выключенный триггер не меняет — гасится только текст, как у Input.
+   cursor наследуемый, поэтому одного правила хватает и значению, и стрелке. */
+.root[data-disabled] .trigger {
+  color: var(--color-control-text-disabled);
+  cursor: not-allowed;
+}
+
+/* Наведение идёт последним: у правила самая высокая специфичность в блоке,
+   и выше него состояния из :not() уже не перебить (правило no-descending-specificity). */
+.root:not([data-disabled], [data-invalid]) .trigger:not([data-popup-open]):hover {
+  border-color: var(--color-border-hover);
+}
+
+/* ─── Значение и стрелка ──────────────────── */
+
+/* Длинная подпись обрезается многоточием: ширину задаёт раскладка снаружи,
+   и растягивать триггер под текст пункта нельзя — уедет стык с попапом. */
+.value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.value[data-placeholder] {
+  color: var(--color-text-placeholder);
+}
+
+.root[data-disabled] .value[data-placeholder] {
+  color: var(--color-control-text-disabled);
+}
+
+/* Стрелка разворачивается, а не подменяется второй иконкой: один элемент,
+   одна анимация, и в выключенном состоянии цвет наследуется от триггера. */
+.icon {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  color: inherit;
+  transition: transform var(--transition-fast);
+}
+
+.icon[data-popup-open] {
+  transform: rotate(180deg);
+}
+
+/* ─── Попап ───────────────────────────────── */
+
+/* Слой задаём здесь: Base UI ставит позиционеру только position и координаты,
+   z-index не трогает вовсе. Без него попап проигрывает любому позиционированному
+   элементу потребителя, потому что лежит порталом в конце <body>. */
+.positioner {
+  z-index: var(--z-index-popup);
+}
+
+/* --anchor-width и --available-height объявлены на позиционере, попап их наследует.
+   Ширина по триггеру — иначе стык двух рамок разъедется. max-height обязателен:
+   без него длинный список уезжает за край экрана. */
+.popup {
+  box-sizing: border-box;
+  width: var(--anchor-width);
+  max-height: var(--available-height);
+  overflow-y: auto;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-bg-elevated);
+  outline: none;
+}
+
+.popup[data-side='bottom'] {
+  border-top: none;
+  border-start-start-radius: 0;
+  border-start-end-radius: 0;
+}
+
+.popup[data-side='top'] {
+  border-bottom: none;
+  border-end-start-radius: 0;
+  border-end-end-radius: 0;
+}
+
+/* ─── Пункт ───────────────────────────────── */
+
+.item {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  min-height: var(--control-height-md);
+  padding-inline: var(--space-3);
+  color: var(--color-text-primary);
+  font-family: var(--font-base);
+  font-size: var(--font-size-regular-16);
+  font-weight: var(--font-weight-regular-16);
+  line-height: var(--line-height-regular-16);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+  outline: none;
+}
+
+/* Выбранный и подсвеченный — разные сигналы разными средствами: цвет отмечает
+   выбор, заливка — позицию курсора или клавиатуры. В исходнике оба состояния
+   красило одно правило, и выбранный пункт пропадал, стоило увести подсветку. */
+.item[data-selected] {
+  color: var(--color-accent);
+}
+
+.item[data-highlighted] {
+  background-color: var(--color-bg-hover);
+}
+
+.item[data-disabled] {
+  color: var(--color-control-text-disabled);
+  cursor: not-allowed;
+}
+
+/* ─── Ошибка ──────────────────────────────── */
+
+.error {
+  color: var(--color-text-danger);
+  font-family: var(--font-base);
+  font-size: var(--font-size-regular-14);
+  font-weight: var(--font-weight-regular-14);
+  line-height: var(--line-height-regular-14);
+}

@@ -1,0 +1,117 @@
+/* Ориентацию все части читают с data-orientation, который ставит Base UI.
+   В исходнике он не использовался вовсе: orientation="vertical" оставлял ряд
+   в строку, а подчёркивание — снизу, то есть вертикальный режим не работал. */
+
+.root {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.root[data-orientation='vertical'] {
+  flex-direction: row;
+}
+
+.list {
+  display: flex;
+  width: 100%;
+}
+
+.list[data-orientation='vertical'] {
+  flex-direction: column;
+  width: auto;
+}
+
+/* ─── Вкладка ─────────────────────────────── */
+
+/* Рамка объявлена сразу со всех сторон нулевой ширины: цвет тогда живёт одним
+   свойством border-color, а ориентация меняет только ширину нужной стороны.
+   Иначе каждое состояние пришлось бы красить дважды, отдельно под горизонталь
+   и вертикаль. Высота — min-height и центрирование, а не паддинг 6px/4px:
+   в исходнике верхний и нижний отступы разъезжались, компенсируя рамку. */
+.tab {
+  box-sizing: border-box;
+  display: inline-flex;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  min-height: var(--control-height-md);
+  padding-inline: var(--space-6);
+  border: 0 solid var(--color-border);
+  border-bottom-width: 2px;
+  background: none;
+  color: var(--color-text-secondary);
+  font-family: var(--font-base);
+  font-size: var(--font-size-regular-16);
+  font-weight: var(--control-font-weight);
+  line-height: var(--line-height-regular-16);
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    color var(--transition-fast),
+    border-color var(--transition-fast),
+    background-color var(--transition-fast);
+}
+
+.tab[data-orientation='vertical'] {
+  flex: none;
+  justify-content: flex-start;
+  border-bottom-width: 0;
+  border-inline-start-width: 2px;
+}
+
+/* Кольцо внутрь, а не наружу: вкладки стоят вплотную, и внешнее кольцо
+   срезала бы соседняя. Знак у отступа отрицательный, ширина и цвет — общие. */
+.tab:focus-visible {
+  border-radius: var(--radius-sm);
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: calc(-1 * var(--focus-ring-offset));
+}
+
+.tab[data-active] {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+/* pointer-events: none не ставим — клики блокирует нативный disabled у <button>
+   (то же решение, что в батче с Button). */
+.tab[data-disabled] {
+  border-color: var(--color-border-disabled);
+  color: var(--color-control-text-disabled);
+  cursor: not-allowed;
+}
+
+.tab[data-active][data-disabled] {
+  border-color: var(--color-accent-disabled);
+  color: var(--color-accent-disabled);
+}
+
+/* Наведение и нажатие идут последними: у правил самая высокая специфичность
+   в блоке, и выше них состояния из :not() уже не перебить. */
+.tab:not([data-disabled]):hover {
+  background-color: var(--color-bg-accent-hover);
+}
+
+.tab:not([data-disabled]):active {
+  background-color: var(--color-bg-accent-active);
+}
+
+/* ─── Панель ──────────────────────────────── */
+
+.panel {
+  padding-block: var(--space-4);
+  color: var(--color-text-primary);
+  font-family: var(--font-base);
+  font-size: var(--font-size-regular-14);
+  font-weight: var(--font-weight-regular-14);
+  line-height: var(--line-height-regular-14);
+}
+
+.panel[data-orientation='vertical'] {
+  padding-block: 0;
+  padding-inline: var(--space-4);
+}
+
+.panel[data-hidden] {
+  display: none;
+}
