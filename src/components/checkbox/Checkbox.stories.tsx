@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { expect, fn } from 'storybook/test'
 
 import { Checkbox } from './Checkbox'
 
@@ -31,6 +32,26 @@ const meta = {
 export default meta
 
 type Story = StoryObj<typeof meta>
+
+// Тест поведения: клик и Space переключают состояние, onCheckedChange уходит наружу.
+// Проверяем роль checkbox и aria-checked, а не имя CSS-класса.
+export const Interactive: Story = {
+  name: 'Переключение',
+  args: { children: 'Check-box', onCheckedChange: fn() },
+  play: async ({ args, canvas, userEvent }) => {
+    const checkbox = canvas.getByRole('checkbox', { name: 'Check-box' })
+    await expect(checkbox).not.toBeChecked()
+
+    await userEvent.click(checkbox)
+    await expect(checkbox).toBeChecked()
+    await expect(args.onCheckedChange).toHaveBeenCalled()
+
+    // Клавиатура: Space на сфокусированном чекбоксе снимает отметку.
+    checkbox.focus()
+    await userEvent.keyboard(' ')
+    await expect(checkbox).not.toBeChecked()
+  },
+}
 
 export const Unchecked: Story = {
   name: 'Не выбран',

@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { expect, fn } from 'storybook/test'
 
 import { RadioGroup } from './RadioGroup'
 import styles from './radioGroup.stories.module.css'
@@ -42,6 +43,21 @@ const meta = {
 export default meta
 
 type Story = StoryObj<typeof meta>
+
+// Тест поведения: клик по варианту выбирает его и уводит значение наружу.
+// Проверяем роль radio и aria-checked, а не подсветку.
+export const Interactive: Story = {
+  name: 'Выбор варианта',
+  args: { defaultValue: 'checked', onValueChange: fn() },
+  play: async ({ args, canvas, userEvent }) => {
+    const off = canvas.getByRole('radio', { name: 'Off option' })
+    await expect(off).not.toBeChecked()
+
+    await userEvent.click(off)
+    await expect(off).toBeChecked()
+    await expect(args.onValueChange).toHaveBeenCalledWith('off', expect.anything())
+  },
+}
 
 export const Checked: Story = {
   name: 'Выбран',

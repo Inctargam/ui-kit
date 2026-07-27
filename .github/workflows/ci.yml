@@ -1,0 +1,43 @@
+# CI этапа 6: линтеры → типы → тесты (стори через addon-vitest в headless-Chromium) → сборка.
+# Порядок из ROADMAP: дешёвые проверки раньше дорогих, тесты и сборка в конце.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Новый пуш в ту же ветку отменяет предыдущий незавершённый прогон.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # pnpm ставим до setup-node: тогда кэш pnpm-store подхватывается по lock-файлу.
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # Браузер для vitest browser mode: тесты гоняют стори в реальном Chromium.
+      # --with-deps ставит системные библиотеки, которых на runner'е нет.
+      - run: pnpm exec playwright install --with-deps chromium
+
+      - run: pnpm lint
+      - run: pnpm lint:css
+      - run: pnpm format:check
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm build

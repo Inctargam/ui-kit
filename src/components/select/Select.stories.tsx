@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { expect, fn, screen } from 'storybook/test'
 
 import { Select } from './Select'
 
@@ -49,6 +50,24 @@ const meta = {
 export default meta
 
 type Story = StoryObj<typeof meta>
+
+// Тест поведения: клик по триггеру открывает listbox (портал в body), выбор пункта
+// пишет значение в триггер и уводит его наружу через onValueChange.
+export const Interactive: Story = {
+  name: 'Выбор значения',
+  args: { label: 'Язык', placeholder: 'Select-box', onValueChange: fn() },
+  play: async ({ args, canvas, userEvent }) => {
+    // Открываем по видимому плейсхолдеру: роль триггера у Base UI не гарантирована,
+    // а текст плейсхолдера до открытия уникален.
+    await userEvent.click(canvas.getByText('Select-box'))
+
+    // Пункты уезжают порталом в body — ищем по документу.
+    await userEvent.click(await screen.findByRole('option', { name: 'Русский' }))
+
+    await expect(canvas.getByText('Русский')).toBeInTheDocument()
+    await expect(args.onValueChange).toHaveBeenCalled()
+  },
+}
 
 export const Default: Story = {
   name: 'Обычный',

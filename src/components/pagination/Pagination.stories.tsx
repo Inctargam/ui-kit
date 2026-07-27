@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { useState } from 'react'
 import { useArgs } from 'storybook/preview-api'
+import { expect, waitFor } from 'storybook/test'
 
 import { Pagination } from './Pagination'
 
@@ -44,6 +46,25 @@ const meta = {
 export default meta
 
 type Story = StoryObj<typeof meta>
+
+// Тест поведения: стрелка «вперёд» уводит на следующую страницу (useArgs в render
+// пишет новую currentPage обратно), и активной становится вторая — по aria-current.
+export const Interactive: Story = {
+  name: 'Переход вперёд',
+  args: { currentPage: 1, totalPages: 55 },
+  // Свой render на useState, а не общий meta.render на useArgs: updateArgs пишет через
+  // канал Storybook, которого в изолированном тест-прогоне нет — там currentPage не
+  // обновилась бы и aria-current не появился. Локальное состояние работает и в тесте.
+  render: (args) => {
+    const [page, setPage] = useState(1)
+
+    return <Pagination {...args} currentPage={page} onPageChange={setPage} onItemsPerPageChange={() => {}} />
+  },
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole('button', { name: 'Next page' }))
+    await waitFor(() => expect(canvas.getByRole('button', { name: '2' })).toHaveAttribute('aria-current', 'page'))
+  },
+}
 
 export const Playground: Story = {
   name: 'Песочница',

@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { expect } from 'storybook/test'
 
 import { TextArea } from './TextArea'
 
@@ -43,6 +44,17 @@ const meta = {
 export default meta
 
 type Story = StoryObj<typeof meta>
+
+// Тест поведения: поле принимает ввод. Контракт — роль textbox по подписи и value.
+export const Typing: Story = {
+  name: 'Ввод текста',
+  args: { label: 'Comment' },
+  play: async ({ canvas, userEvent }) => {
+    const textarea = canvas.getByRole('textbox', { name: 'Comment' })
+    await userEvent.type(textarea, 'Hello')
+    await expect(textarea).toHaveValue('Hello')
+  },
+}
 
 export const Default: Story = {
   name: 'Обычное',
