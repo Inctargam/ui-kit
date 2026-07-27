@@ -1,0 +1,83 @@
+/* База контрола формы (подпись, рамка, ошибка, выключенное состояние) — та же,
+   что в input.module.css, вплоть до токенов. Про общий модуль см. комментарий там. */
+
+.root {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* ─── Подпись ─────────────────────────────── */
+
+.label {
+  color: var(--color-text-secondary);
+  font-family: var(--font-base);
+  font-size: var(--font-size-regular-14);
+  font-weight: var(--font-weight-regular-14);
+  line-height: var(--line-height-regular-14);
+}
+
+/* ─── Поле ────────────────────────────────── */
+
+/* Высоту задаёт атрибут rows (по умолчанию 3), а не min-height: высота в строках
+   переживает смену интерлиньяжа, а пиксельная — нет. Тянуть по вертикали
+   разрешаем: по горизонтали ширину держит раскладка родителя. */
+.textarea {
+  box-sizing: border-box;
+  width: 100%;
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: transparent;
+  color: var(--color-text-primary);
+  font-family: var(--font-base);
+  font-size: var(--font-size-regular-16);
+  font-weight: var(--font-weight-regular-16);
+  line-height: var(--line-height-regular-16);
+  resize: vertical;
+  transition: border-color var(--transition-fast);
+}
+
+/* opacity: 1 — Firefox приглушает плейсхолдер сам, и цвет из токена уезжает. */
+.textarea::placeholder {
+  color: var(--color-text-placeholder);
+  opacity: 1;
+}
+
+/* Здесь фокус приходит прямо на элемент с рамкой, поэтому :focus-visible,
+   а не :focus-within обёртки, как в Input. Токены кольца общие. */
+.textarea:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.root[data-invalid] .textarea {
+  border-color: var(--color-border-danger);
+}
+
+/* Рамку выключенное поле не меняет — гасится только текст. */
+.root[data-disabled] .label,
+.root[data-disabled] .textarea,
+.root[data-disabled] .textarea::placeholder {
+  color: var(--color-control-text-disabled);
+}
+
+.root[data-disabled] .textarea {
+  cursor: not-allowed;
+}
+
+/* Наведение идёт последним: у правила самая высокая специфичность в блоке,
+   и выше него состояния из :not() уже не перебить (правило no-descending-specificity). */
+.root:not([data-disabled], [data-invalid]) .textarea:hover {
+  border-color: var(--color-border-hover);
+}
+
+/* ─── Ошибка ──────────────────────────────── */
+
+.error {
+  color: var(--color-text-danger);
+  font-family: var(--font-base);
+  font-size: var(--font-size-regular-14);
+  font-weight: var(--font-weight-regular-14);
+  line-height: var(--line-height-regular-14);
+}

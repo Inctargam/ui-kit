@@ -1,0 +1,144 @@
+/* База контрола формы: подпись сверху, рамка вокруг поля, текст ошибки снизу,
+   выключенное состояние. Ровно те же роли и токены повторяет textarea.module.css.
+   Потребителей у базы пока два, поэтому она живёт копией в обоих модулях; общий
+   модуль заведём на следующем батче форм (checkbox, radio-group), когда станет
+   видно, что именно у четырёх компонентов общего. */
+
+.root {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* ─── Подпись ─────────────────────────────── */
+
+.label {
+  color: var(--color-text-secondary);
+  font-family: var(--font-base);
+  font-size: var(--font-size-regular-14);
+  font-weight: var(--font-weight-regular-14);
+  line-height: var(--line-height-regular-14);
+}
+
+.root[data-disabled] .label {
+  color: var(--color-control-text-disabled);
+}
+
+/* ─── Рамка поля ──────────────────────────── */
+
+/* Высоту держит min-height, а не вертикальный паддинг: содержимое центрируется
+   флексом, и поле не разъезжается от иконки. box-sizing свой — reset.css
+   потребитель подключать не обязан. */
+.control {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--control-height-md);
+  padding-inline: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: transparent;
+  color: var(--color-text-primary);
+  transition: border-color var(--transition-fast);
+}
+
+/* Кольцо фокуса одно на весь контрол и рисуется на обёртке: фокус получает
+   внутренний input, а обвести нужно всю рамку вместе с иконкой. Поэтому
+   :focus-within, а не :focus-visible — для текстового поля они и так совпадают
+   (браузер считает фокус в нём «видимым» даже после клика мышью). */
+.control:focus-within {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.root[data-invalid] .control {
+  border-color: var(--color-border-danger);
+}
+
+/* Рамку выключенное поле не меняет — гасится только текст. cursor наследуемый,
+   поэтому одного правила на обёртке хватает и внутренним элементам. */
+.root[data-disabled] .control {
+  color: var(--color-control-text-disabled);
+  cursor: not-allowed;
+}
+
+/* Наведение идёт последним: у правила самая высокая специфичность в блоке,
+   и выше него состояния из :not() уже не перебить (правило no-descending-specificity). */
+.root:not([data-disabled], [data-invalid]) .control:hover {
+  border-color: var(--color-border-hover);
+}
+
+/* ─── Поле ────────────────────────────────── */
+
+/* Само поле прозрачное и без рамки: всё оформление на обёртке. Цвет наследуется
+   оттуда же, поэтому выключенное состояние отдельного правила не требует. */
+.input {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  color: inherit;
+  font-family: var(--font-base);
+  font-size: var(--font-size-regular-16);
+  font-weight: var(--font-weight-regular-16);
+  line-height: var(--line-height-regular-16);
+  outline: none;
+}
+
+/* opacity: 1 — Firefox приглушает плейсхолдер сам, и цвет из токена уезжает. */
+.input::placeholder {
+  color: var(--color-text-placeholder);
+  opacity: 1;
+}
+
+.root[data-disabled] .input::placeholder {
+  color: var(--color-control-text-disabled);
+}
+
+/* ─── Иконка поиска ───────────────────────── */
+
+.icon {
+  flex-shrink: 0;
+  color: var(--color-text-secondary);
+}
+
+.root[data-disabled] .icon {
+  color: var(--color-control-text-disabled);
+}
+
+/* ─── Кнопка показа пароля ────────────────── */
+
+.toggle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* Кольцо без отступа: оно рисуется внутри рамки поля, и штатные 2px наложились бы
+   на неё. Ширина и цвет — общие токены. */
+.toggle:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: 0;
+}
+
+.toggle:disabled {
+  cursor: not-allowed;
+}
+
+/* ─── Ошибка ──────────────────────────────── */
+
+.error {
+  color: var(--color-text-danger);
+  font-family: var(--font-base);
+  font-size: var(--font-size-regular-14);
+  font-weight: var(--font-weight-regular-14);
+  line-height: var(--line-height-regular-14);
+}

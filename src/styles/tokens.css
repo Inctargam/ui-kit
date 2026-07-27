@@ -185,6 +185,14 @@
   --color-control-bg-active: var(--color-dark-500);
   --color-control-bg-disabled: var(--color-dark-500);
 
+  /* Выключенное поле ввода: подпись, значение, плейсхолдер — всё разом.
+     Отдельно от --color-text-disabled, и это не дубль: в рабочем состоянии подпись
+     и плейсхолдер поля уже light-900, так что выключенное состояние тем же цветом
+     ничем бы от рабочего не отличалось. Вниз по палитре остаётся dark-100.
+     Кнопке он не годится: её выключенная подпись лежит на собственной заливке
+     (primary-900, dark-500), тёмно-серый на ней тонет. */
+  --color-control-text-disabled: var(--color-dark-100);
+
   /* Текст */
   --color-text-primary: var(--color-light-100);
   --color-text-secondary: var(--color-light-900);
