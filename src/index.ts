@@ -22,8 +22,8 @@
  *   они не попадают.
  */
 
-export * from './components'
+export * from './components/index.js'
 // Набор иконок: 90 компонентов, `IconProps` и union `IconName`.
 // Реэкспорт пофайловый, поэтому tree-shaking не ломается — потребитель
 // платит только за те иконки, которые импортировал.
-export * from './icons'
+export * from './icons/index.js'

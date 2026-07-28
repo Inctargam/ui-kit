@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect } from 'storybook/test'
 
-import { TextArea } from './TextArea'
+import { TextArea } from './TextArea.js'
 
 const meta = {
   title: 'Components/TextArea',

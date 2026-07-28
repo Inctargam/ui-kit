@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn } from 'storybook/test'
 
-import { Button } from './Button'
+import { Button } from './Button.js'
 
 // `satisfies Meta<typeof Button>`, а не `: Meta<typeof Button>`: satisfies проверяет
 // объект по типу, но сохраняет литеральные типы — и ниже args типизируются union'ом

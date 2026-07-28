@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn } from 'storybook/test'
 
-import { RadioGroup } from './RadioGroup'
+import { RadioGroup } from './RadioGroup.js'
 import styles from './radioGroup.stories.module.css'
 
 const options = [

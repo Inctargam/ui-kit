@@ -7,7 +7,7 @@ import { Dialog } from '@base-ui/react/dialog'
 import clsx from 'clsx'
 import type { ReactNode } from 'react'
 
-import { CloseOutlineIcon } from '../../icons'
+import { CloseOutlineIcon } from '../../icons/index.js'
 import styles from './modal.module.css'
 
 export type ModalProps = {

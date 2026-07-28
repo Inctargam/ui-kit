@@ -1,7 +1,25 @@
 {
   "name": "@remark-gram/ui-kit",
-  "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
+  "description": "React 19 UI component library built on Base UI and CSS Modules",
+  "keywords": [
+    "react",
+    "ui",
+    "components",
+    "design-system",
+    "base-ui",
+    "css-modules",
+    "typescript"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/Inctargam/ui-kit#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Inctargam/ui-kit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Inctargam/ui-kit/issues"
+  },
   "type": "module",
   "sideEffects": [
     "**/*.css"
@@ -21,6 +39,9 @@
     "./styles/reset.css": "./dist/styles/reset.css",
     "./package.json": "./package.json"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "dev": "storybook dev -p 6006",
     "build": "tsc -b && vite build && tsc -p tsconfig.build.json",
@@ -29,6 +50,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "eslint .",
+    "lint:pkg": "publint --strict && attw --pack .",
     "lint:css": "stylelint \"**/*.css\" --allow-empty-input",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -45,6 +67,7 @@
     "clsx": "^2.1.1"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.5",
     "@base-ui/react": "1.5.0",
     "@eslint/js": "^10.0.1",
     "@storybook/addon-a11y": "10.5.4",
@@ -67,6 +90,7 @@
     "globals": "^17.7.0",
     "playwright": "^1.62.0",
     "prettier": "^3.9.6",
+    "publint": "^0.3.22",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "storybook": "10.5.4",

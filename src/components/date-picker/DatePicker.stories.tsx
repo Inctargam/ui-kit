@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect } from 'storybook/test'
 
-import { DatePicker } from './DatePicker'
+import { DatePicker } from './DatePicker.js'
 
 // Корень пикера — width: 100%, ширину задаёт раскладка потребителя. В витрине
 // её задаёт декоратор, иначе контрол схлопнулся бы по содержимому.

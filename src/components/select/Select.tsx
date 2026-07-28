@@ -4,7 +4,7 @@ import { Select as BaseSelect } from '@base-ui/react/select'
 import clsx from 'clsx'
 import type { ReactNode } from 'react'
 
-import { ArrowIosDownOutlineIcon } from '../../icons'
+import { ArrowIosDownOutlineIcon } from '../../icons/index.js'
 import styles from './select.module.css'
 
 export type SelectOption<Value extends string | number = string> = {

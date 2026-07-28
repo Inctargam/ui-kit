@@ -1,6 +1,6 @@
-import { TabsList, TabsPanel, TabsRoot, TabsTab } from './Tabs'
+import { TabsList, TabsPanel, TabsRoot, TabsTab } from './Tabs.js'
 
-export type { TabsListProps, TabsPanelProps, TabsRootProps, TabsTabProps } from './Tabs'
+export type { TabsListProps, TabsPanelProps, TabsRootProps, TabsTabProps } from './Tabs.js'
 
 /**
  * Вкладки. Составной компонент: `Tabs.Root` держит активное значение,

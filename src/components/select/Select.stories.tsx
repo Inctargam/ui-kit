@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn, screen } from 'storybook/test'
 
-import { Select } from './Select'
+import { Select } from './Select.js'
 
 const options = [
   { label: 'Select-box', value: 'option-1' },

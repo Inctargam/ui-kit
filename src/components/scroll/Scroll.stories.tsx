@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import { Scroll } from './Scroll'
+import { Scroll } from './Scroll.js'
 import styles from './scroll.stories.module.css'
 
 const ITEMS = Array.from({ length: 24 }, (_, index) => `Notification ${index + 1}`)

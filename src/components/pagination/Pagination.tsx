@@ -5,7 +5,7 @@ import { Select } from '@base-ui/react/select'
 import clsx from 'clsx'
 import type { ComponentProps } from 'react'
 
-import { ArrowIosBackIcon, ArrowIosDownOutlineIcon, ArrowIosForwardIcon } from '../../icons'
+import { ArrowIosBackIcon, ArrowIosDownOutlineIcon, ArrowIosForwardIcon } from '../../icons/index.js'
 import styles from './pagination.module.css'
 
 export type PaginationProps = {

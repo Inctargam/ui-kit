@@ -2,8 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 import { expect, screen, waitFor } from 'storybook/test'
 
-import { Button } from '../button'
-import { Modal } from './Modal'
+import { Button } from '../button/index.js'
+import { Modal } from './Modal.js'
 
 const meta = {
   title: 'Components/Modal',

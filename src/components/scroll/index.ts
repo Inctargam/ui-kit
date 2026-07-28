@@ -1,2 +1,2 @@
-export type { ScrollOrientation, ScrollProps } from './Scroll'
-export { Scroll } from './Scroll'
+export type { ScrollOrientation, ScrollProps } from './Scroll.js'
+export { Scroll } from './Scroll.js'

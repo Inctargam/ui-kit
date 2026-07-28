@@ -27,7 +27,7 @@ const HEADER = '// Сгенерировано `pnpm icons:build` из src/icons/
  * общий тип пропсов и деструктуризация `size`.
  */
 const template = ({ componentName, jsx }, { tpl }) => tpl`
-import type { IconProps } from '../types'
+import type { IconProps } from '../types.js'
 
 export function ${componentName}({ size = 24, ...props }: IconProps) {
   return ${jsx}
@@ -91,10 +91,12 @@ const barrel = [
   ...generated
     .map(({ componentName }) => componentName)
     .sort()
-    .map((componentName) => `export { ${componentName} } from './components/${componentName}'`),
+    // Расширение `.js` обязательно: без него импорты в сгенерированных .d.ts
+    // не резолвятся у потребителя с moduleResolution node16/nodenext (ловит attw).
+    .map((componentName) => `export { ${componentName} } from './components/${componentName}.js'`),
   // Без пустой строки: `simple-import-sort` считает её границей группы
   // и требует сортировать реэкспорты одним блоком.
-  "export type { IconProps } from './types'",
+  "export type { IconProps } from './types.js'",
   '',
   '/**',
   ' * Имена всех иконок набора.',

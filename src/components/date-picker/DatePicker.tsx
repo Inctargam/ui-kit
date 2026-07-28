@@ -7,8 +7,8 @@ import clsx from 'clsx'
 import type { ComponentProps } from 'react'
 import { useEffect, useRef, useState } from 'react'
 
-import { CalendarOutlineIcon } from '../../icons'
-import { Calendar } from './Calendar'
+import { CalendarOutlineIcon } from '../../icons/index.js'
+import { Calendar } from './Calendar.js'
 import styles from './date-picker.module.css'
 
 /** Диапазон дат режима `range`. Обе границы обязательны: полуоткрытого состояния нет. */

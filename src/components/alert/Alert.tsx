@@ -1,7 +1,7 @@
 import clsx from 'clsx'
 import type { ComponentProps } from 'react'
 
-import { CloseOutlineIcon } from '../../icons'
+import { CloseOutlineIcon } from '../../icons/index.js'
 import styles from './alert.module.css'
 
 export type AlertVariant = 'error' | 'success' | 'warning' | 'info'

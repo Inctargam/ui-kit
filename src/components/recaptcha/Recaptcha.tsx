@@ -5,7 +5,7 @@
 import clsx from 'clsx'
 import type { ComponentProps, KeyboardEvent } from 'react'
 
-import { CheckmarkOutlineIcon, RecaptchaLogoIcon } from '../../icons'
+import { CheckmarkOutlineIcon, RecaptchaLogoIcon } from '../../icons/index.js'
 import styles from './recaptcha.module.css'
 
 export type RecaptchaState = 'default' | 'checked' | 'loading' | 'error' | 'expired'

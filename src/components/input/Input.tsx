@@ -8,7 +8,7 @@ import { Input as BaseInput } from '@base-ui/react/input'
 import clsx from 'clsx'
 import { useState } from 'react'
 
-import { EyeIcon, EyeOffIcon, SearchOutlineIcon } from '../../icons'
+import { EyeIcon, EyeOffIcon, SearchOutlineIcon } from '../../icons/index.js'
 import styles from './input.module.css'
 
 export type InputProps = {

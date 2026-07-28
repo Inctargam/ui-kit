@@ -1,2 +1,2 @@
-export type { CardProps } from './Card'
-export { Card } from './Card'
+export type { CardProps } from './Card.js'
+export { Card } from './Card.js'

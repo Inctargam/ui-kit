@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 
-import type { RecaptchaState } from './Recaptcha'
-import { Recaptcha } from './Recaptcha'
+import type { RecaptchaState } from './Recaptcha.js'
+import { Recaptcha } from './Recaptcha.js'
 
 const meta = {
   title: 'Components/Recaptcha',

@@ -1,5 +1,5 @@
 // Сгенерировано `pnpm icons:build` из src/icons/svg. Руками не править.
-import type { IconProps } from '../types'
+import type { IconProps } from '../types.js'
 export function PlusCircleOutlineIcon({ size = 24, ...props }: IconProps) {
   return (
     <svg

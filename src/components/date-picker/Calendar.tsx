@@ -3,7 +3,7 @@
 import clsx from 'clsx'
 import { useState } from 'react'
 
-import { ArrowIosBackIcon, ArrowIosForwardIcon } from '../../icons'
+import { ArrowIosBackIcon, ArrowIosForwardIcon } from '../../icons/index.js'
 import styles from './calendar.module.css'
 
 type MonthGrid = (number | null)[][]

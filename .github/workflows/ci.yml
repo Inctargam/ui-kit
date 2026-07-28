@@ -41,3 +41,7 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test
       - run: pnpm build
+
+      # Проверки пакета: publint — согласованность exports/полей, attw — резолвятся ли
+      # типы во всех режимах. Только после build: обе читают готовый dist.
+      - run: pnpm lint:pkg

@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { useArgs } from 'storybook/preview-api'
 import { expect, waitFor } from 'storybook/test'
 
-import { Pagination } from './Pagination'
+import { Pagination } from './Pagination.js'
 
 // Компонент полностью управляемый, поэтому в витрине состояние ведут args:
 // useArgs пишет обратно в панель Controls, и там видно, что реально изменилось.

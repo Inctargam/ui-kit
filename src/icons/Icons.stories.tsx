@@ -2,8 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import type { ComponentType } from 'react'
 
 import styles from './icons.showcase.module.css'
-import * as iconSet from './index'
-import type { IconProps } from './types'
+import * as iconSet from './index.js'
+import type { IconProps } from './types.js'
 
 /**
  * Витрина набора иконок — то, что раньше показывала песочница `dev/Playground.tsx`.

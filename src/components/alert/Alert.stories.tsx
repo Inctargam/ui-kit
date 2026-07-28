@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn } from 'storybook/test'
 
-import { Alert } from './Alert'
+import { Alert } from './Alert.js'
 
 const meta = {
   title: 'Components/Alert',
