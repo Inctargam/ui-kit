@@ -1,26 +1,32 @@
-# ui-kit
+# @remark-gram/ui-kit
 
 Библиотека UI-компонентов: Base UI + CSS Modules, React 19, TypeScript.
 
-Компоненты выносятся из `shared/ui` приложения `remark-gram` в отдельный переиспользуемый
-пакет.
+14 компонентов и 90 иконок. Тёмная тема по умолчанию, стили — CSS Modules,
+доступность и клавиатура — на примитивах Base UI.
 
-**Статус:** этап 7 закрыт — каркас, токены, 90 иконок, сборка пакета, Storybook и тесты
-готовы, компоненты перенесены, `@remark-gram/ui-kit@0.1.0` опубликован в npm.
-Что изменилось у каждого компонента против исходника — в `MIGRATIONS.md`.
+```bash
+pnpm add @remark-gram/ui-kit
+```
 
 ## Компоненты
 
-| Компонент    | Основа                     | Коротко                                                                 |
-| ------------ | -------------------------- | ----------------------------------------------------------------------- |
-| `Button`     | Base UI `Button`           | `variant`: `primary` \| `secondary` \| `outline` \| `text`              |
-| `Card`       | `<div>`                    | поверхность-панель, `padding`: `none` \| `small` \| `medium` \| `large` |
-| `Checkbox`   | Base UI `Checkbox`         | подпись — `children`, клик ловит весь ряд                               |
-| `DatePicker` | Base UI `Field`            | `mode`: одна дата или диапазон, календарь внутри, `label` и `error`     |
-| `Input`      | Base UI `Field`            | `text` / `password` / `search`, показ пароля, `label` и `error`         |
-| `Pagination` | `<nav>` + Base UI `Select` | номера с многоточиями, стрелки, выбор размера страницы                  |
-| `RadioGroup` | Base UI `RadioGroup`       | список через `options`, `direction`: `vertical` \| `horizontal`         |
-| `TextArea`   | Base UI `Field`            | высота через `rows`, `resize: vertical`, `label` и `error`              |
+| Компонент    | Основа                     | Коротко                                                                      |
+| ------------ | -------------------------- | ---------------------------------------------------------------------------- |
+| `Alert`      | `<div role="alert">`       | `variant`: `error` \| `success` \| `warning` \| `info`, крестик по `onClose` |
+| `Button`     | Base UI `Button`           | `variant`: `primary` \| `secondary` \| `outline` \| `text`                   |
+| `Card`       | `<div>`                    | поверхность-панель, `padding`: `none` \| `small` \| `medium` \| `large`      |
+| `Checkbox`   | Base UI `Checkbox`         | подпись — `children`, клик ловит весь ряд                                    |
+| `DatePicker` | Base UI `Field`            | `mode`: одна дата или диапазон, календарь внутри, `label` и `error`          |
+| `Input`      | Base UI `Field`            | `text` / `password` / `search`, показ пароля, `label` и `error`              |
+| `Modal`      | Base UI `Dialog`           | управляемый: `open` + `onOpenChange`, шапка с `title` и крестиком            |
+| `Pagination` | `<nav>` + Base UI `Select` | номера с многоточиями, стрелки, выбор размера страницы                       |
+| `RadioGroup` | Base UI `RadioGroup`       | список через `options`, `direction`: `vertical` \| `horizontal`              |
+| `Recaptcha`  | `<div>`                    | только вид: `state` приходит снаружи, проверку делает потребитель            |
+| `Scroll`     | Base UI `ScrollArea`       | своя полоса прокрутки, `orientation`: `vertical` \| `horizontal` \| `both`   |
+| `Select`     | Base UI `Select`           | список через `options`, значение — `string` или `number`                     |
+| `Tabs`       | Base UI `Tabs`             | составной: `Tabs.Root` / `List` / `Tab` / `Panel`                            |
+| `TextArea`   | Base UI `Field`            | высота через `rows`, `resize: vertical`, `label` и `error`                   |
 
 Пропсы, которых нет в таблице, — нативные: `...rest` уходит на корневой элемент целиком,
 включая `ref` (в React 19 это обычный проп). Непустой `error` у полей формы сам включает
