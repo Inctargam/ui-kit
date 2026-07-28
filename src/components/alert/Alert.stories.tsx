@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { expect, fn } from 'storybook/test'
 
 import { Alert } from './Alert'
 
@@ -24,6 +25,16 @@ const meta = {
 export default meta
 
 type Story = StoryObj<typeof meta>
+
+// Тест поведения: крестик (есть только когда передан onClose) уводит закрытие наружу.
+export const Dismissible: Story = {
+  name: 'С закрытием',
+  args: { variant: 'info', children: 'Dismiss me', onClose: fn() },
+  play: async ({ args, canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole('button', { name: 'Close alert' }))
+    await expect(args.onClose).toHaveBeenCalledOnce()
+  },
+}
 
 export const ErrorVariant: Story = {
   name: 'Ошибка',

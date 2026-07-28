@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { expect } from 'storybook/test'
 
 import { Input } from './Input'
 
@@ -44,6 +45,21 @@ const meta = {
 export default meta
 
 type Story = StoryObj<typeof meta>
+
+// Тест поведения: кнопка показа пароля меняет тип поля и свою подпись.
+// Контракт — видимость значения и aria-label кнопки, а не разметка.
+export const PasswordToggle: Story = {
+  name: 'Показ пароля',
+  args: { label: 'Password', type: 'password', defaultValue: 'secret' },
+  play: async ({ canvas, userEvent }) => {
+    const field = canvas.getByLabelText('Password')
+    await expect(field).toHaveAttribute('type', 'password')
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Show password' }))
+    await expect(field).toHaveAttribute('type', 'text')
+    await expect(canvas.getByRole('button', { name: 'Hide password' })).toBeInTheDocument()
+  },
+}
 
 export const Default: Story = {
   name: 'Обычное',

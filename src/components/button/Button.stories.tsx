@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { expect, fn } from 'storybook/test'
 
 import { Button } from './Button'
 
@@ -35,6 +36,28 @@ export default meta
 
 // `typeof meta`, а не `typeof Button`: так стори наследует уже суженные метой args.
 type Story = StoryObj<typeof meta>
+
+// Тест поведения (addon-vitest прогонит play как тест): контракт кнопки — вызывать
+// onClick по клику и молчать в disabled. Проверяем это, а не классы варианта.
+export const Clickable: Story = {
+  name: 'Клик',
+  args: { children: 'Click me', onClick: fn() },
+  play: async ({ args, canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole('button', { name: 'Click me' }))
+    await expect(args.onClick).toHaveBeenCalledOnce()
+  },
+}
+
+export const DisabledNoClick: Story = {
+  name: 'Отключённая не кликается',
+  args: { children: 'No click', disabled: true, onClick: fn() },
+  play: async ({ args, canvas, userEvent }) => {
+    const button = canvas.getByRole('button', { name: 'No click' })
+    await expect(button).toBeDisabled()
+    await userEvent.click(button)
+    await expect(args.onClick).not.toHaveBeenCalled()
+  },
+}
 
 export const Primary: Story = {
   name: 'Основная',

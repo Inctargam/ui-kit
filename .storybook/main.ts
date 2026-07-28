@@ -4,11 +4,12 @@ const config: StorybookConfig = {
   // Стори лежат рядом с кодом, который показывают: Button.tsx + Button.stories.tsx.
   // Из пакета они не едут — tsconfig.build.json их исключает, а vite build видит
   // только то, что достижимо из src/index.ts.
-  stories: ['../src/**/*.mdx', '../src/**/*.stories.@(ts|tsx)'],
+  stories: ['../src/**/*.stories.@(ts|tsx)'],
 
-  // addon-vitest и Chromatic из remark-gram здесь пока не подключены: тест-раннера
-  // в ките нет, он появляется на этапе 6 роадмапа.
-  addons: ['@storybook/addon-docs', '@storybook/addon-a11y'],
+  // addon-vitest (этап 6) превращает каждую стори в тест — mount + a11y + play, если есть.
+  // Chromatic из remark-gram по-прежнему не подключён: требует аккаунт и токен в секретах,
+  // отложен как опциональный пункт этапа 6.
+  addons: ['@storybook/addon-vitest', '@storybook/addon-docs', '@storybook/addon-a11y'],
 
   // react-vite, а не nextjs-vite: Next в ките нет. Если стори упадёт с
   // "invariant expected app router to be mounted" — компонент тайно зависит от Next,

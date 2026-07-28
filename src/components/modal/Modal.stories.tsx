@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
+import { expect, screen, waitFor } from 'storybook/test'
 
 import { Button } from '../button'
 import { Modal } from './Modal'
@@ -29,6 +30,35 @@ const meta = {
 export default meta
 
 type Story = StoryObj<typeof meta>
+
+// Тест поведения: кнопка открывает модалку (роль dialog уезжает порталом в body),
+// Esc закрывает. Контракт — доступная роль и заголовок, а не разметка попапа.
+export const Interactive: Story = {
+  name: 'Открытие и закрытие',
+  args: { open: false, onOpenChange: () => {}, title: 'Modal Title', children: null },
+  render: () => {
+    const [open, setOpen] = useState(false)
+
+    return (
+      <>
+        <Button onClick={() => setOpen(true)}>Open Modal</Button>
+        <Modal open={open} onOpenChange={setOpen} title="Modal Title">
+          <p style={{ margin: 0 }}>Modal content goes here</p>
+        </Modal>
+      </>
+    )
+  },
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByRole('button', { name: 'Open Modal' }))
+
+    // Попап в портале — ищем по документу, а не по холсту стори.
+    await expect(await screen.findByRole('dialog')).toBeInTheDocument()
+    await expect(screen.getByText('Modal Title')).toBeInTheDocument()
+
+    await userEvent.keyboard('{Escape}')
+    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
+  },
+}
 
 /** Модалка с кнопкой открытия — основной сценарий использования. */
 export const Default: Story = {

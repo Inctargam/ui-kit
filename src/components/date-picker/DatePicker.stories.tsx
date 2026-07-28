@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { expect } from 'storybook/test'
 
 import { DatePicker } from './DatePicker'
 
@@ -42,6 +43,24 @@ type Story = StoryObj<typeof meta>
 // и визуальная регрессия на этапе 6 падала бы без причины.
 const DAY = new Date(2026, 6, 15)
 const RANGE = { from: new Date(2026, 6, 6), to: new Date(2026, 6, 19) }
+
+// Тест поведения: неуправляемый пикер открывает календарь и записывает выбранный день.
+// Попап живёт в потоке страницы (не в портале), поэтому его видит холст стори.
+export const Interactive: Story = {
+  name: 'Выбор даты',
+  args: { placeholder: 'Select date' },
+  play: async ({ canvas, userEvent }) => {
+    // Открываем по видимому плейсхолдеру: до выбора он уникален.
+    await userEvent.click(canvas.getByText('Select date'))
+
+    // Календарь показывает текущий месяц — 15-е число есть в любом.
+    await userEvent.click(canvas.getByRole('button', { name: '15' }))
+
+    // Плейсхолдер сменился датой, и календарь закрылся после одиночного выбора.
+    await expect(canvas.queryByText('Select date')).not.toBeInTheDocument()
+    await expect(canvas.queryByRole('button', { name: '15' })).not.toBeInTheDocument()
+  },
+}
 
 export const Default: Story = {
   name: 'Пустой',
