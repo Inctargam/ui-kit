@@ -1,5 +1,18 @@
 # @remark-gram/ui-kit
 
+## 0.2.0
+
+### Minor Changes
+
+- [#3](https://github.com/Inctargam/ui-kit/pull/3) [`bf67879`](https://github.com/Inctargam/ui-kit/commit/bf67879bfe5f9d09391816d8fb708dfef81acd98) Thanks [@AlxTafari](https://github.com/AlxTafari)! - Новые компоненты `DropdownMenu` (меню действий на Base UI `Menu`) и `ConfirmDialog`
+  (диалог подтверждения поверх `Modal`).
+
+  `Modal` получил проп `bodyClassName` — класс обёртки тела, для окон, содержимое которых
+  должно игнорировать отступы по умолчанию.
+
+  Новые токены: `--z-index-menu` (слой меню, выше модального), `--color-text-destructive`
+  и `--color-text-destructive-hover` (подпись разрушающего пункта меню).
+
 ## 0.1.1
 
 ### Patch Changes
