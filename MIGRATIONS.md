@@ -174,6 +174,53 @@
 
 ---
 
+## Батч 6: `dropdown-menu`, `confirm-dialog`
+
+Оба компонента появились в `remark-gram` 1 августа, уже после переноса батчей 1–5 —
+это догон рассинхрона, а не продолжение плана этапа 5.
+
+- ± `DropdownMenuItem.iconId: string` (id спрайта) → `icon?: ReactNode`: потребитель
+  передаёт готовый `<Edit2OutlineIcon />`. Union `IconName` тут не годится — под него
+  нужен реестр «имя → компонент», а он тянет в бандл все 90 иконок
+- ± иконка пункта обёрнута в `<span class="itemIcon">`: приезжает готовым элементом,
+  классом снаружи её не пометить, а запрет на сжатие ей нужен
+- ± триггер по умолчанию — `MoreHorizontalIcon` вместо `<Icon iconId="icon-more-horizontal">`
+- ± `DropdownMenuProps` = свои пропсы + `Omit<MenuRootProps, 'children'>`, `side`/`align`/
+  `sideOffset` типизированы от `MenuPositionerProps`. Обёртка над `onOpenChange`,
+  срезавшая `eventDetails`, убрана — тип берётся у Base UI, как у `Modal`
+- ± `ConfirmDialogProps` тянет `open`/`disablePointerDismissal` из `ModalProps` через `Pick`;
+  `onOpenChange` остаётся суженным до `(open: boolean) => void` — причину закрытия компонент
+  разбирает сам, наружу отмена одна
+- ± кнопки диалога получили класс вместо селектора `.actions button`: элементный селектор
+  внутри CSS-модуля ловит любую вложенную кнопку, включая чужую из `message`
+- ± `width: 96px; height: 36px` у кнопок → `min-width: 96px`; высоту `Button` и так держит
+  сам через `--control-height-md`
+- ± отступ под вопросом `30px` → `--space-8` (32px): 30px в сетку 4pt не ложится
+- ± меню: `--color-light-100` → `--color-text-primary`, `--color-primary-100`/`-500` →
+  `--color-accent-hover`/`--color-accent` (значения совпадают точь-в-точь),
+  `--color-dark-500`/`-100` → `--color-bg-elevated`/`--color-border`
+- ± пункт меню: высота через `min-height: var(--control-height-md)` вместо `padding: 6px 12px`,
+  как у пункта `Select`; `padding: 6px 0` попапа → `padding-block: var(--space-2)`
+- ± свой фокус триггера (`outline: 2px solid --color-primary-700`, offset 2px) → общее
+  правило кита на `--focus-ring-*`; значения те же, но теперь одно место на весь кит
+- ± выключенный пункт: `--color-text-secondary` → `--color-control-text-disabled` —
+  тот же токен, что у выключенного пункта `Select`, попап у них общего вида
+- \+ `--z-index-menu` (1200): выше `--z-index-modal`. Меню открывают изнутри модалки,
+  и на общем `--z-index-popup` (1000) оно ушло бы под неё — ровно тот баг, который
+  в приложении чинили значением 200 поверх модалочных 100/101
+- \+ `--color-text-destructive` (`danger-300`) и `-hover` (`danger-100`) — подпись пункта
+  удаления. Не `--color-text-danger` (`danger-500`): тот же довод, что у `--color-text-weekend`,
+  на тёмном фоне 500 глохнет
+- \+ `box-shadow: var(--shadow-popup)` попапу меню — у попапов `Select` и `Calendar` тень
+  уже есть, у меню в исходнике не было
+- \+ `bodyClassName` у `Modal` — перенос правки из `remark-gram` (`Modal.tsx`, 2 августа)
+- ± стори переведены на `@storybook/react-vite`, `title` → `Components/*`, локальный
+  `tags: ['autodocs']` убран, русские `name` добавлены; `userEvent` берётся из контекста
+  `play`, а не импортом — как в остальных стори кита
+- − `Icon`, `iconId` и любые упоминания спрайта
+
+---
+
 ## Долги
 
 - `--color-border-disabled` — потребителей нет, кандидат на удаление
@@ -193,3 +240,9 @@
 - клавиатура в `Calendar`: дни обходятся `Tab`, стрелок и `Home`/`End` нет.
   Полноценная клавиатурная навигация — вместе с `min`/`max` и локалями
 - клавиатура и фокус во всех перенесённых компонентах глазами не проверены
+- стори `WithActions` у `Modal` руками собирает то, чем теперь занят `ConfirmDialog` —
+  переписать на него или удалить как дубль
+- `Recaptcha` в `remark-gram` больше не используется: приложение перешло на невидимую
+  reCAPTCHA v3, виджет из форм убран. В ките компонент остаётся без потребителя —
+  решать, оставлять его или помечать устаревшим (этап 9)
+- ширина попапа меню `min-width: 160px` — литерал, токена ширины в ките нет

@@ -3,8 +3,9 @@
  * поддерживать: переименование или удаление это breaking change.
  *
  * Компоненты и их типы пропсов:
- * `Alert`, `Button`, `Card`, `Checkbox`, `DatePicker`, `Input`, `Modal`,
- * `Pagination`, `RadioGroup`, `Recaptcha`, `Scroll`, `Select`, `Tabs`, `TextArea`.
+ * `Alert`, `Button`, `Card`, `Checkbox`, `ConfirmDialog`, `DatePicker`,
+ * `DropdownMenu`, `Input`, `Modal`, `Pagination`, `RadioGroup`, `Recaptcha`,
+ * `Scroll`, `Select`, `Tabs`, `TextArea`.
  *
  * Наружу намеренно не идёт:
  * — `Calendar` (`components/date-picker/Calendar.tsx`) — внутренность `DatePicker`,

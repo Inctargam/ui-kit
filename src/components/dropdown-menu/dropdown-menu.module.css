@@ -1,0 +1,97 @@
+/* ─── Триггер ─────────────────────────────── */
+
+.trigger {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.trigger:hover {
+  color: var(--color-accent-hover);
+}
+
+/* Открытое меню держит триггер подсвеченным: пока попап на экране, кнопка —
+   его якорь, и по ней должно быть видно, откуда он вырос. */
+.trigger[data-popup-open] {
+  color: var(--color-accent);
+}
+
+.trigger:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* ─── Попап ───────────────────────────────── */
+
+/* Слой задаём здесь: Base UI ставит позиционеру только position и координаты.
+   Выше --z-index-modal, а не общий --z-index-popup: меню открывают изнутри
+   модалки, и на «попаповом» слое оно оказалось бы под ней. */
+.positioner {
+  z-index: var(--z-index-menu);
+}
+
+/* min-width, а не width: список сам по себе узкий («Edit», «Delete»), и без нижней
+   границы попап схлопывается в полоску шириной с самое короткое слово.
+   Ширину под конкретное меню задают классом снаружи. */
+.popup {
+  box-sizing: border-box;
+  min-width: 160px;
+  padding-block: var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-bg-elevated);
+  box-shadow: var(--shadow-popup);
+  outline: none;
+}
+
+/* ─── Пункт ───────────────────────────────── */
+
+.item {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--control-height-md);
+  padding-inline: var(--space-3);
+  color: var(--color-text-primary);
+  font-family: var(--font-base);
+  font-size: var(--font-size-regular-14);
+  font-weight: var(--font-weight-regular-14);
+  line-height: var(--line-height-regular-14);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+  outline: none;
+  user-select: none;
+}
+
+/* Подсветка одна на курсор и на клавиатуру: Base UI ставит data-highlighted
+   и в том, и в другом случае. Своего :hover здесь быть не должно — два разных
+   правила разъехались бы при навигации стрелками. */
+.item[data-highlighted] {
+  background-color: var(--color-bg-hover);
+}
+
+.item[data-disabled] {
+  color: var(--color-control-text-disabled);
+  cursor: not-allowed;
+}
+
+.danger {
+  color: var(--color-text-destructive);
+}
+
+.danger[data-highlighted] {
+  color: var(--color-text-destructive-hover);
+}
+
+.itemIcon {
+  display: flex;
+  flex: 0 0 auto;
+}
