@@ -1,8 +1,8 @@
 # @remark-gram/ui-kit
 
-## 0.2.0
+## 0.1.2
 
-### Minor Changes
+### Patch Changes
 
 - [#3](https://github.com/Inctargam/ui-kit/pull/3) [`bf67879`](https://github.com/Inctargam/ui-kit/commit/bf67879bfe5f9d09391816d8fb708dfef81acd98) Thanks [@AlxTafari](https://github.com/AlxTafari)! - Новые компоненты `DropdownMenu` (меню действий на Base UI `Menu`) и `ConfirmDialog`
   (диалог подтверждения поверх `Modal`).
