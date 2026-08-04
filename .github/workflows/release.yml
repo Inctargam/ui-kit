@@ -1,0 +1,51 @@
+# Релиз этапа 8: Changesets. Один и тот же прогон делает две разные вещи в зависимости
+# от того, лежат ли в `.changeset/` неразобранные `*.md`:
+#   есть  → открывает (или обновляет) PR «Version Packages» с бампом версии и CHANGELOG;
+#   нет   → значит этот PR только что слили — запускает `pnpm release` и публикует в npm.
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+# Пуши в main идут пачками; параллельные прогоны дрались бы за один и тот же PR версии.
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    # contents: write — коммит бампа и git-теги; pull-requests: write — сам PR версии.
+    # Токен по умолчанию read-only, без этих двух строк action падает на создании PR.
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # v1, а не v2: v2 существует только как v2.0.0-next.* (пререлиз).
+      # Инструмент публикации — не то место, где стоит сидеть на бете.
+      - uses: changesets/action@v1
+        with:
+          # Скрипт собирает dist и только потом публикует: `changeset publish` берёт
+          # папку как есть и о сборке не знает.
+          publish: pnpm release
+          commit: 'chore: версия пакета'
+          title: 'chore: версия пакета'
+        env:
+          # github-token по умолчанию берётся из github.token, а вот NPM_TOKEN
+          # нужен явно: из него action собирает .npmrc перед публикацией.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
