@@ -2,7 +2,7 @@
 
 Библиотека UI-компонентов: Base UI + CSS Modules, React 19, TypeScript.
 
-14 компонентов и 90 иконок. Тёмная тема по умолчанию, стили — CSS Modules,
+16 компонентов и 90 иконок. Тёмная тема по умолчанию, стили — CSS Modules,
 доступность и клавиатура — на примитивах Base UI.
 
 ```bash
@@ -11,22 +11,24 @@ pnpm add @remark-gram/ui-kit
 
 ## Компоненты
 
-| Компонент    | Основа                     | Коротко                                                                      |
-| ------------ | -------------------------- | ---------------------------------------------------------------------------- |
-| `Alert`      | `<div role="alert">`       | `variant`: `error` \| `success` \| `warning` \| `info`, крестик по `onClose` |
-| `Button`     | Base UI `Button`           | `variant`: `primary` \| `secondary` \| `outline` \| `text`                   |
-| `Card`       | `<div>`                    | поверхность-панель, `padding`: `none` \| `small` \| `medium` \| `large`      |
-| `Checkbox`   | Base UI `Checkbox`         | подпись — `children`, клик ловит весь ряд                                    |
-| `DatePicker` | Base UI `Field`            | `mode`: одна дата или диапазон, календарь внутри, `label` и `error`          |
-| `Input`      | Base UI `Field`            | `text` / `password` / `search`, показ пароля, `label` и `error`              |
-| `Modal`      | Base UI `Dialog`           | управляемый: `open` + `onOpenChange`, шапка с `title` и крестиком            |
-| `Pagination` | `<nav>` + Base UI `Select` | номера с многоточиями, стрелки, выбор размера страницы                       |
-| `RadioGroup` | Base UI `RadioGroup`       | список через `options`, `direction`: `vertical` \| `horizontal`              |
-| `Recaptcha`  | `<div>`                    | только вид: `state` приходит снаружи, проверку делает потребитель            |
-| `Scroll`     | Base UI `ScrollArea`       | своя полоса прокрутки, `orientation`: `vertical` \| `horizontal` \| `both`   |
-| `Select`     | Base UI `Select`           | список через `options`, значение — `string` или `number`                     |
-| `Tabs`       | Base UI `Tabs`             | составной: `Tabs.Root` / `List` / `Tab` / `Panel`                            |
-| `TextArea`   | Base UI `Field`            | высота через `rows`, `resize: vertical`, `label` и `error`                   |
+| Компонент       | Основа                     | Коротко                                                                      |
+| --------------- | -------------------------- | ---------------------------------------------------------------------------- |
+| `Alert`         | `<div role="alert">`       | `variant`: `error` \| `success` \| `warning` \| `info`, крестик по `onClose` |
+| `Button`        | Base UI `Button`           | `variant`: `primary` \| `secondary` \| `outline` \| `text`                   |
+| `Card`          | `<div>`                    | поверхность-панель, `padding`: `none` \| `small` \| `medium` \| `large`      |
+| `Checkbox`      | Base UI `Checkbox`         | подпись — `children`, клик ловит весь ряд                                    |
+| `ConfirmDialog` | `Modal` + `Button`         | вопрос и пара кнопок, `closeOnConfirm` для асинхронного действия             |
+| `DatePicker`    | Base UI `Field`            | `mode`: одна дата или диапазон, календарь внутри, `label` и `error`          |
+| `DropdownMenu`  | Base UI `Menu`             | меню действий: `items[]`, иконка пункта — готовый элемент, `danger`          |
+| `Input`         | Base UI `Field`            | `text` / `password` / `search`, показ пароля, `label` и `error`              |
+| `Modal`         | Base UI `Dialog`           | управляемый: `open` + `onOpenChange`, шапка с `title` и крестиком            |
+| `Pagination`    | `<nav>` + Base UI `Select` | номера с многоточиями, стрелки, выбор размера страницы                       |
+| `RadioGroup`    | Base UI `RadioGroup`       | список через `options`, `direction`: `vertical` \| `horizontal`              |
+| `Recaptcha`     | `<div>`                    | только вид: `state` приходит снаружи, проверку делает потребитель            |
+| `Scroll`        | Base UI `ScrollArea`       | своя полоса прокрутки, `orientation`: `vertical` \| `horizontal` \| `both`   |
+| `Select`        | Base UI `Select`           | список через `options`, значение — `string` или `number`                     |
+| `Tabs`          | Base UI `Tabs`             | составной: `Tabs.Root` / `List` / `Tab` / `Panel`                            |
+| `TextArea`      | Base UI `Field`            | высота через `rows`, `resize: vertical`, `label` и `error`                   |
 
 Пропсы, которых нет в таблице, — нативные: `...rest` уходит на корневой элемент целиком,
 включая `ref` (в React 19 это обычный проп). Непустой `error` у полей формы сам включает
@@ -308,6 +310,45 @@ export const List = ({ total }: { total: number }) => {
         setPage(1)
       }}
     />
+  )
+}
+```
+
+Меню действий и подтверждение. Иконка пункта — готовый элемент, а не имя: реестра
+«имя → компонент» в ките нет, он тянул бы в бандл все 90 иконок.
+
+```tsx
+import { ConfirmDialog, DropdownMenu, Edit2OutlineIcon, TrashOutlineIcon } from '@remark-gram/ui-kit'
+import { useState } from 'react'
+
+export const PostActions = ({ onEdit, onDelete }: { onEdit: () => void; onDelete: () => void }) => {
+  const [confirming, setConfirming] = useState(false)
+
+  return (
+    <>
+      <DropdownMenu
+        ariaLabel="Действия с постом"
+        items={[
+          { id: 'edit', label: 'Редактировать', icon: <Edit2OutlineIcon />, onSelect: onEdit },
+          {
+            id: 'delete',
+            label: 'Удалить',
+            icon: <TrashOutlineIcon />,
+            danger: true,
+            onSelect: () => setConfirming(true),
+          },
+        ]}
+      />
+      <ConfirmDialog
+        open={confirming}
+        onOpenChange={setConfirming}
+        title="Удалить пост"
+        message="Пост будет удалён без возможности восстановить."
+        confirmLabel="Удалить"
+        cancelLabel="Отмена"
+        onConfirm={onDelete}
+      />
+    </>
   )
 }
 ```

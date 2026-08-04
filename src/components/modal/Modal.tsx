@@ -11,6 +11,11 @@ import { CloseOutlineIcon } from '../../icons/index.js'
 import styles from './modal.module.css'
 
 export type ModalProps = {
+  /**
+   * Класс обёртки тела — для окон, содержимое которых должно игнорировать
+   * отступы по умолчанию (картинка во всю ширину, своя сетка).
+   */
+  bodyClassName?: string
   open: boolean
   /** Тип берётся у Base UI: вторым аргументом приезжает причина закрытия (Esc, клик вне, крестик). */
   onOpenChange: DialogRootProps['onOpenChange']
@@ -35,6 +40,7 @@ export const Modal = ({
   onOpenChange,
   title,
   children,
+  bodyClassName,
   className,
   disablePointerDismissal = false,
   ...props
@@ -49,7 +55,7 @@ export const Modal = ({
             <CloseOutlineIcon />
           </Dialog.Close>
         </div>
-        <div className={styles.body}>{children}</div>
+        <div className={clsx(styles.body, bodyClassName)}>{children}</div>
       </Dialog.Popup>
     </Dialog.Portal>
   </Dialog.Root>
