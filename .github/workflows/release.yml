@@ -1,7 +1,21 @@
-# Релиз этапа 8: Changesets. Один и тот же прогон делает две разные вещи в зависимости
-# от того, лежат ли в `.changeset/` неразобранные `*.md`:
-#   есть  → открывает (или обновляет) PR «Version Packages» с бампом версии и CHANGELOG;
-#   нет   → значит этот PR только что слили — запускает `pnpm release` и публикует в npm.
+# Релиз через Changesets на trusted publishing (OIDC): секрета с npm-токеном в репозитории
+# нет вовсе. npm сам проверяет, что публикация пришла из этого репозитория, из этого файла
+# workflow и из окружения `npm` — доверенный издатель настраивается на стороне npm,
+# один раз (см. README, раздел «Версионирование»).
+#
+# Прогон разбит на четыре задачи, потому что право публиковать (`id-token: write`) должно
+# висеть на как можно меньшем куске: в задаче с этим правом любой шаг может опубликовать
+# пакет от имени репозитория. Поэтому сборка живёт в `pack`, а `publish` только заливает
+# готовый тарбол.
+#
+#   select-mode  есть ли неразобранные `.changeset/*.md` → 'version' | 'publish' | 'none'
+#   version      их нашли        → открывает/обновляет PR «chore: версия пакета»
+#   pack         их не осталось  → собирает dist и пакует тарбол в артефакт
+#   publish      → берёт тарбол, публикует в npm, ставит git-тег и GitHub Release
+#
+# `changesets/action` пришпилен коммитом, а не тегом `v2.1.1`: тег переставляется, коммит —
+# нет, а этот action держит право публиковать пакет. Обновление — руками, вместе с версией
+# в комментарии рядом. Плавающего тега `v2` у репозитория action'а нет вовсе.
 name: Release
 
 on:
@@ -9,18 +23,56 @@ on:
     branches: [main]
 
 # Пуши в main идут пачками; параллельные прогоны дрались бы за один и тот же PR версии.
-concurrency: ${{ github.workflow }}-${{ github.ref }}
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+# Сбрасываем права по умолчанию: каждая задача просит ровно то, что ей нужно.
+permissions: {}
 
 jobs:
-  release:
+  select-mode:
+    name: Выбор режима
+    # Форк не должен пытаться выпускать пакет от нашего имени.
+    if: github.repository_owner == 'Inctargam'
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      mode: ${{ steps.select-mode.outputs.mode }}
+      publish-plan-artifact-id: ${{ steps.select-mode.outputs.publish-plan-artifact-id }}
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
 
-    # contents: write — коммит бампа и git-теги; pull-requests: write — сам PR версии.
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      # Node 24: OIDC-публикация требует npm ≥ 11.5.1, а Changesets 3 — Node ≥ 22.11.
+      # Кэш pnpm намеренно выключен во всём релизном workflow: восстановленный store —
+      # лишний путь, по которому в задачу с правом публикации может приехать чужой код.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Есть ли неразобранные описания
+        id: select-mode
+        uses: changesets/action/select-mode@8488615a623b1b9c987934bb89eae8af6a946ac1 # v2.1.1
+
+  version:
+    name: PR версии
+    needs: select-mode
+    if: needs.select-mode.outputs.mode == 'version'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # contents: write — коммит бампа; pull-requests: write — сам PR версии.
     # Токен по умолчанию read-only, без этих двух строк action падает на создании PR.
     permissions:
       contents: write
       pull-requests: write
-
     steps:
       - uses: actions/checkout@v4
 
@@ -30,22 +82,95 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
-          cache: pnpm
+          node-version: 24
 
+      - run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Открыть или обновить PR версии
+        uses: changesets/action/version@8488615a623b1b9c987934bb89eae8af6a946ac1 # v2.1.1
+        with:
+          commit-message: 'chore: версия пакета'
+          pr-title: 'chore: версия пакета'
+        env:
+          # Не для самого action (тот берёт токен из входа `github-token`), а для
+          # `@changesets/changelog-github`: он ходит в GraphQL API за номером PR и автором
+          # правки и без токена падает с «Please create a GitHub personal access token».
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  pack:
+    name: Сборка тарбола
+    needs: select-mode
+    if: needs.select-mode.outputs.mode == 'publish'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      pack-dir-artifact-id: ${{ steps.pack.outputs.pack-dir-artifact-id }}
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      # Здесь скрипты установки нужны: esbuild подкладывает нативный бинарник, без него
+      # `vite build` не стартует. Права публиковать у этой задачи нет — потому сборка и тут.
       - run: pnpm install --frozen-lockfile
 
-      # v1, а не v2: v2 существует только как v2.0.0-next.* (пререлиз).
-      # Инструмент публикации — не то место, где стоит сидеть на бете.
-      - uses: changesets/action@v1
+      - run: pnpm build
+
+      - name: Упаковать
+        id: pack
+        uses: changesets/action/pack@8488615a623b1b9c987934bb89eae8af6a946ac1 # v2.1.1
         with:
-          # Скрипт собирает dist и только потом публикует: `changeset publish` берёт
-          # папку как есть и о сборке не знает.
-          publish: pnpm release
-          commit: 'chore: версия пакета'
-          title: 'chore: версия пакета'
-        env:
-          # github-token по умолчанию берётся из github.token, а вот NPM_TOKEN
-          # нужен явно: из него action собирает .npmrc перед публикацией.
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          publish-plan-artifact-id: ${{ needs.select-mode.outputs.publish-plan-artifact-id }}
+
+  publish:
+    name: Публикация в npm
+    needs: pack
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # Имя окружения должно совпадать с полем «Environment» доверенного издателя на npm.
+    # Это второй замок после имени файла workflow: прогон из другой ветки или другого
+    # workflow OIDC-токен получит, но npm его не примет.
+    environment: npm
+    permissions:
+      contents: write # git-тег и GitHub Release
+      id-token: write # OIDC-токен, которым npm подтверждает происхождение публикации
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      # Явная проверка вместо надежды на то, что в образе runner'а свежий Node.
+      # npm ниже 11.5.1 про OIDC не знает и молча уходит в поиск токена, а без токена
+      # реестр отвечает 404 на PUT — ровно та ошибка, из-за которой не вышел 0.1.2.
+      - name: Проверить, что npm умеет OIDC
+        run: |
+          npm_version="$(npm --version)"
+          echo "npm $npm_version"
+          if [ "$(printf '%s\n11.5.1\n' "$npm_version" | sort -V | head -1)" != "11.5.1" ]; then
+            echo "::error::npm $npm_version < 11.5.1 — trusted publishing не поддерживается"
+            exit 1
+          fi
+
+      # Без скриптов: в задаче с правом публикации postinstall чужой зависимости получил бы
+      # доступ к OIDC-токену. Собирать тут нечего — тарбол уже лежит в артефакте.
+      - run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Опубликовать
+        uses: changesets/action/publish@8488615a623b1b9c987934bb89eae8af6a946ac1 # v2.1.1
+        with:
+          pack-dir-artifact-id: ${{ needs.pack.outputs.pack-dir-artifact-id }}
+          create-github-releases: true
