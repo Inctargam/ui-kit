@@ -107,6 +107,22 @@ export const Open: Story = {
   args: { defaultOpen: true, label: 'Язык', defaultValue: 'option-1' },
 }
 
+// renderOption / renderValue дают свою разметку пункта и выбранного значения.
+// label остаётся строкой для поиска с клавиатуры.
+export const CustomRender: Story = {
+  name: 'Своя разметка пункта и значения',
+  args: {
+    label: 'Язык',
+    defaultValue: 'option-2',
+    renderOption: (option) => <span style={{ fontWeight: 600 }}>{option.label}</span>,
+    renderValue: (value) => <span style={{ fontStyle: 'italic' }}>{value ?? '—'}</span>,
+  },
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(canvas.getByText('option-2'))
+    await expect(await screen.findByRole('option', { name: 'Русский' })).toBeInTheDocument()
+  },
+}
+
 export const AllStates: Story = {
   name: 'Все состояния',
   render: (args) => (

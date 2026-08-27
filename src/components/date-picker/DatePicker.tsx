@@ -4,7 +4,7 @@
 
 import { Field } from '@base-ui/react/field'
 import clsx from 'clsx'
-import type { ComponentProps } from 'react'
+import type { ComponentProps, ReactNode } from 'react'
 import { useEffect, useRef, useState } from 'react'
 
 import { CalendarOutlineIcon } from '../../icons/index.js'
@@ -14,15 +14,24 @@ import styles from './date-picker.module.css'
 /** Диапазон дат режима `range`. Обе границы обязательны: полуоткрытого состояния нет. */
 export type DateRange = { from: Date; to: Date }
 
-/** Значение пикера: одна дата в режиме `single`, диапазон в `range`. */
-export type DatePickerValue = Date | DateRange | undefined
+/**
+ * Значение пикера: одна дата в режиме `single`, диапазон в `range`.
+ * `null` — пустое значение от react-hook-form, `undefined` — неуправляемый режим.
+ */
+export type DatePickerValue = Date | DateRange | null | undefined
 
 export type DatePickerProps = {
   /** `single` — одна дата, `range` — диапазон. Меняет и формат значения, и поведение календаря. */
   mode?: 'single' | 'range'
-  label?: string
+  /** Подпись над полем. Узел, а не строка — под react-hook-form подписи бывают составными. */
+  label?: ReactNode
+  /**
+   * Доступное имя триггера. Нужен, потому что `label` больше не обязательно строка:
+   * по умолчанию — `ariaLabel ?? (строковый label ?? placeholder)`.
+   */
+  ariaLabel?: string
   /** Текст ошибки. Непустой включает состояние `invalid` — отдельного пропа под него нет. */
-  error?: string
+  error?: ReactNode
   disabled?: boolean
   /** Текст, пока дата не выбрана. */
   placeholder?: string
@@ -31,6 +40,8 @@ export type DatePickerProps = {
   /** Значение. Передан — компонент управляемый, значение ведёт потребитель. */
   value?: DatePickerValue
   onChange?: (value: DatePickerValue) => void
+  /** Зовётся на клик мимо, на выбор даты и на закрытие кликом по триггеру — для `onBlur` react-hook-form. */
+  onBlur?: () => void
   // onChange у <div> — нативный FormEventHandler, наш принимает дату: пересечение
   // по имени пришлось бы разруливать на каждом вызове, поэтому нативный убран.
 } & Omit<ComponentProps<'div'>, 'onChange'>
@@ -59,6 +70,7 @@ const formatValue = (value: DatePickerValue): string => {
 export const DatePicker = ({
   mode = 'single',
   label,
+  ariaLabel,
   error,
   className,
   disabled,
@@ -66,6 +78,7 @@ export const DatePicker = ({
   defaultOpen = false,
   value,
   onChange,
+  onBlur,
   ...rest
 }: DatePickerProps) => {
   const [open, setOpen] = useState(defaultOpen)
@@ -76,6 +89,9 @@ export const DatePicker = ({
   const selected = isControlled ? value : internalValue
   const isRange = mode === 'range'
   const displayValue = formatValue(selected)
+  // label больше не обязательно строка — доступное имя триггера берём из ariaLabel,
+  // затем из строкового label, затем из плейсхолдера.
+  const accessibleLabel = ariaLabel ?? (typeof label === 'string' ? label : placeholder)
 
   // Попап живёт в потоке страницы, а не в портале, поэтому закрытие по клику мимо
   // и по Escape приходится вести самим. Слушатели висят только пока открыто.
@@ -85,6 +101,7 @@ export const DatePicker = ({
     const handlePointerDown = (event: MouseEvent) => {
       if (rootRef.current && !rootRef.current.contains(event.target as Node)) {
         setOpen(false)
+        onBlur?.()
       }
     }
 
@@ -99,23 +116,28 @@ export const DatePicker = ({
       document.removeEventListener('mousedown', handlePointerDown)
       document.removeEventListener('keydown', handleKeyDown)
     }
-  }, [open])
+  }, [onBlur, open])
 
   const commit = (next: DatePickerValue) => {
     onChange?.(next)
     if (!isControlled) setInternalValue(next)
   }
 
+  const close = () => {
+    setOpen(false)
+    onBlur?.()
+  }
+
   const handleSelect = (date: Date) => {
     commit(date)
-    setOpen(false)
+    close()
   }
 
   const handleRangeSelect = (range: DateRange) => {
     commit(range)
     // Первый клик диапазона даёт from === to — набор ещё не закончен, календарь
     // остаётся открытым. Закрываем только на второй, когда границы разъехались.
-    if (range.from.getTime() !== range.to.getTime()) setOpen(false)
+    if (range.from.getTime() !== range.to.getTime()) close()
   }
 
   return (
@@ -136,7 +158,15 @@ export const DatePicker = ({
           className={styles.trigger}
           disabled={disabled}
           aria-expanded={open}
-          onClick={() => setOpen((prev) => !prev)}>
+          aria-label={accessibleLabel}
+          onClick={() =>
+            setOpen((prev) => {
+              // Клик по триггеру при открытом попапе — это уход с контрола.
+              if (prev) onBlur?.()
+
+              return !prev
+            })
+          }>
           <span className={clsx(styles.value, !displayValue && styles.placeholder)}>{displayValue || placeholder}</span>
           <CalendarOutlineIcon className={styles.icon} size={24} />
         </Field.Control>
@@ -145,6 +175,8 @@ export const DatePicker = ({
           <div className={styles.popup}>
             <Calendar
               mode={mode}
+              // Открываем календарь на месяце выбранной даты, а не на текущем.
+              initialMonth={selected instanceof Date ? selected : undefined}
               selected={isRange ? undefined : (selected as Date | undefined)}
               rangeSelected={isRange ? (selected as DateRange | undefined) : undefined}
               onSelect={handleSelect}

@@ -27,9 +27,12 @@ const meta = {
     },
   },
   argTypes: {
+    cancelDisabled: { description: 'Блокирует кнопку отмены' },
     cancelLabel: { description: 'Текст кнопки отмены. По умолчанию `No`' },
     closeOnConfirm: { description: 'Закрывать ли диалог сразу после подтверждения. По умолчанию `true`' },
     confirmLabel: { description: 'Текст кнопки подтверждения. По умолчанию `Yes`' },
+    dismissDisabled: { description: 'Глушит крестик, Esc и клик мимо — на время необратимого действия' },
+    error: { description: 'Блок обратной связи над вопросом. ReactNode' },
     message: { description: 'Тело диалога. Принимает ReactNode, не только строку' },
   },
   args: {
@@ -59,6 +62,39 @@ export const CustomLabels: Story = {
     message: 'Do you really want to finish editing? If you close the changes you have made will not be saved',
     confirmLabel: 'Discard',
     cancelLabel: 'Keep editing',
+  },
+}
+
+/** Блок обратной связи над вопросом — например, ошибка сервера после неудачного подтверждения. */
+export const WithError: Story = {
+  name: 'С ошибкой',
+  args: {
+    closeOnConfirm: false,
+    error: 'Server responded 500. Try again.',
+    confirmDisabled: false,
+  },
+  play: async ({ userEvent }) => {
+    await expect(screen.getByText('Server responded 500. Try again.')).toBeVisible()
+    await userEvent.click(screen.getByRole('button', { name: 'Yes' }))
+    // closeOnConfirm=false — диалог остаётся, ошибке есть где показаться.
+    await expect(screen.getByRole('dialog')).toBeVisible()
+  },
+}
+
+/** `dismissDisabled` глушит крестик, Esc и клик мимо, пока идёт необратимое действие. */
+export const DismissDisabled: Story = {
+  name: 'Закрытие заблокировано',
+  args: {
+    dismissDisabled: true,
+    cancelDisabled: true,
+    confirmDisabled: true,
+  },
+  play: async ({ args, userEvent }) => {
+    await expect(screen.getByRole('button', { name: 'Close' })).toBeDisabled()
+
+    await userEvent.keyboard('{Escape}')
+    await expect(args.onOpenChange).not.toHaveBeenCalled()
+    await expect(screen.getByRole('dialog')).toBeVisible()
   },
 }
 

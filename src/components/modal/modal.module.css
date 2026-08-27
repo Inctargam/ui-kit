@@ -35,6 +35,20 @@
   border-bottom: 1px solid var(--color-border);
 }
 
+/* Со слотом слева шапка становится трёхколоночной: слот, центрированный заголовок,
+   крестик. Крайние колонки под иконку 24px, зазор — 16px по шкале отступов. */
+.header[data-has-start] {
+  display: grid;
+  grid-template-columns: var(--icon-size-md) 1fr var(--icon-size-md);
+  gap: var(--space-4);
+}
+
+.headerStart {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 /* Вес брался из --font-weight-bold, которого в шкале типографики нет вовсе:
    правило молча отваливалось и заголовок рисовался нормальным. Пара к h1 — h1. */
 .title {
@@ -43,6 +57,10 @@
   font-size: var(--font-size-h1);
   font-weight: var(--font-weight-h1);
   line-height: var(--line-height-h1);
+}
+
+.header[data-has-start] .title {
+  text-align: center;
 }
 
 /* Кнопку обнуляем здесь же: на reset.css потребителя полагаться нельзя. */
@@ -62,6 +80,13 @@
 
 .close:hover {
   color: var(--color-accent-hover);
+}
+
+/* Выключен, пока идёт необратимое действие (dismissDisabled). В исходнике был
+   --color-light-900; берём общий токен выключенного контрола, как у крестика Alert. */
+.close:disabled {
+  color: var(--color-control-text-disabled);
+  cursor: not-allowed;
 }
 
 .close:focus-visible {

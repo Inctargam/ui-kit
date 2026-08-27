@@ -221,6 +221,61 @@
 
 ---
 
+## Батч 7: правки `modal`, `confirm-dialog`, `date-picker`, `input`, `select`
+
+Догон рассинхрона с `remark-gram` за 4–15 августа. Новых компонентов нет, публичный
+API растёт — релиз minor.
+
+`modal`:
+
+- \+ `headerStart?: ReactNode` — слот слева в шапке; `.header[data-has-start]` переходит
+  на `grid` `var(--icon-size-md) 1fr var(--icon-size-md)`, `gap: var(--space-4)`,
+  заголовок `text-align: center`. В исходнике было `24px` / `16px` литералами
+- \+ `dismissDisabled?: boolean` — глушит крестик (`disabled` у `Dialog.Close`), Esc
+  (ранний выход в обёртке `onOpenChange`) и клик мимо (`disablePointerDismissal ||
+  dismissDisabled`)
+- ± `onOpenChange` теперь идёт через обёртку `openChangeHandler`, тип сохранён от Base UI
+  (вторым аргументом — причина закрытия)
+- \+ `.close:disabled` — `--color-control-text-disabled` + `cursor: not-allowed`
+  (в исходнике `--color-light-900`)
+
+`confirm-dialog`:
+
+- \+ `error?: ReactNode` — блок `.error` над вопросом, `margin-bottom: var(--space-6)`
+  (`30px` в исходнике)
+- \+ `cancelDisabled?: boolean` → `disabled` на кнопку отмены
+- \+ `dismissDisabled` — добавлен в `Pick<ModalProps, …>` и проброшен в `Modal`,
+  своим пропом не объявляется
+
+`date-picker`:
+
+- ± `label?: string → ReactNode`, `error?: string → ReactNode`
+- \+ `ariaLabel?: string` — `ariaLabel ?? (строковый label ?? placeholder)` на `aria-label`
+  триггера: `label` больше не обязательно строка
+- ± `DatePickerValue` расширен `null` — react-hook-form отдаёт `null` для пустого значения
+- \+ `onBlur?: () => void` — зовётся на клик мимо, на выбор даты и на закрытие кликом
+  по триггеру (не на Esc)
+- \+ `initialMonth={selected instanceof Date ? selected : undefined}` в `Calendar` —
+  календарь открывается на месяце выбранной даты
+- − баг-фикс `formatValue(selected)` вместо `formatValue(selected || new Date())` —
+  в ките уже был исправлен на батче 5, переносить нечего
+- − переименования `handleSelect → selectHandler` и прочие — в ките свой стиль
+
+`input`:
+
+- ± `label?: string → ReactNode`
+
+`select`:
+
+- \+ `triggerClassName`, `popupClassName` — мержатся через `clsx`
+- \+ `renderOption?: (option) => ReactNode` — `renderOption ? renderOption(option) : option.label`
+- \+ `renderValue?: (value: Value | null) => ReactNode` — уходит children в `BaseSelect.Value`
+- \+ `label={typeof option.label === 'string' ? option.label : undefined}` на `BaseSelect.Item` —
+  поиск с клавиатуры, когда `ItemText` перестал быть строкой. В исходнике `label: string`,
+  в ките `label: ReactNode` — отсюда `typeof`-страж
+
+---
+
 ## Долги
 
 - `--color-border-disabled` — потребителей нет, кандидат на удаление

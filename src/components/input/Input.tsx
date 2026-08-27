@@ -6,13 +6,15 @@ import { Field } from '@base-ui/react/field'
 import type { InputProps as BaseInputProps } from '@base-ui/react/input'
 import { Input as BaseInput } from '@base-ui/react/input'
 import clsx from 'clsx'
+import type { ReactNode } from 'react'
 import { useState } from 'react'
 
 import { EyeIcon, EyeOffIcon, SearchOutlineIcon } from '../../icons/index.js'
 import styles from './input.module.css'
 
 export type InputProps = {
-  label?: string
+  /** Подпись над полем. Строка или узел — под react-hook-form подписи бывают составными. */
+  label?: ReactNode
   /** Текст ошибки. Непустой включает состояние `invalid` — отдельного пропа под него нет. */
   error?: string
   // className сужен до строки (как в Button): у Base UI он принимает ещё и функцию

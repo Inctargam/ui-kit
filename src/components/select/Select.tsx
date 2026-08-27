@@ -20,6 +20,14 @@ export type SelectProps<Value extends string | number = string> = {
   label?: string
   options: SelectOption<Value>[]
   placeholder?: string
+  /** Класс попапа — мержится с внутренним через `clsx`. */
+  popupClassName?: string
+  /** Своя разметка пункта списка. По умолчанию — `option.label`. */
+  renderOption?: (option: SelectOption<Value>) => ReactNode
+  /** Своя разметка выбранного значения в триггере. */
+  renderValue?: (value: Value | null) => ReactNode
+  /** Класс триггера — мержится с внутренним через `clsx`. */
+  triggerClassName?: string
   // items считается из options — прокидывать его снаружи нечем и незачем.
 } & Omit<SelectRootProps<Value>, 'children' | 'items'>
 
@@ -44,6 +52,10 @@ export const Select = <Value extends string | number = string>({
   label,
   options,
   placeholder = 'Select',
+  popupClassName,
+  renderOption,
+  renderValue,
+  triggerClassName,
   ...props
 }: SelectProps<Value>) => (
   <Field.Root className={clsx(styles.root, className)} disabled={disabled} invalid={Boolean(error)}>
@@ -54,8 +66,10 @@ export const Select = <Value extends string | number = string>({
           а его id знает только Select. */}
       {label && <BaseSelect.Label className={styles.label}>{label}</BaseSelect.Label>}
 
-      <BaseSelect.Trigger className={styles.trigger}>
-        <BaseSelect.Value className={styles.value} placeholder={placeholder} />
+      <BaseSelect.Trigger className={clsx(styles.trigger, triggerClassName)}>
+        <BaseSelect.Value className={styles.value} placeholder={placeholder}>
+          {renderValue}
+        </BaseSelect.Value>
         <BaseSelect.Icon className={styles.icon}>
           <ArrowIosDownOutlineIcon size={16} />
         </BaseSelect.Icon>
@@ -65,7 +79,7 @@ export const Select = <Value extends string | number = string>({
         {/* alignItemWithTrigger={false} — попап встаёт под триггером, а не поверх него:
             по макету это одна «простыня» из триггера и списка, а не наложение. */}
         <BaseSelect.Positioner alignItemWithTrigger={false} className={styles.positioner}>
-          <BaseSelect.Popup className={styles.popup}>
+          <BaseSelect.Popup className={clsx(styles.popup, popupClassName)}>
             {/* List, а не пункты прямо в Popup: роль listbox переезжает на свой
                 элемент, попапу остаётся оформление. Своих стилей у него нет. */}
             <BaseSelect.List>
@@ -74,8 +88,11 @@ export const Select = <Value extends string | number = string>({
                   className={styles.item}
                   disabled={option.disabled}
                   key={String(option.value)}
+                  // label для поиска с клавиатуры: ItemText теперь может быть не строкой
+                  // (renderOption), и Base UI не вытянет из него текст сам.
+                  label={typeof option.label === 'string' ? option.label : undefined}
                   value={option.value}>
-                  <BaseSelect.ItemText>{option.label}</BaseSelect.ItemText>
+                  <BaseSelect.ItemText>{renderOption ? renderOption(option) : option.label}</BaseSelect.ItemText>
                 </BaseSelect.Item>
               ))}
             </BaseSelect.List>
