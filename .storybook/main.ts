@@ -4,7 +4,8 @@ const config: StorybookConfig = {
   // Стори лежат рядом с кодом, который показывают: Button.tsx + Button.stories.tsx.
   // Из пакета они не едут — tsconfig.build.json их исключает, а vite build видит
   // только то, что достижимо из src/index.ts.
-  stories: ['../src/**/*.stories.@(ts|tsx)'],
+  // .mdx — только страницы-доки без стори (лендинг Introduction).
+  stories: ['../src/**/*.mdx', '../src/**/*.stories.@(ts|tsx)'],
 
   // addon-vitest (этап 6) превращает каждую стори в тест — mount + a11y + play, если есть.
   // Chromatic из remark-gram по-прежнему не подключён: требует аккаунт и токен в секретах,

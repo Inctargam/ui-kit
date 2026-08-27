@@ -34,6 +34,13 @@ const PAYMENTS = [
 const meta = {
   title: 'Components/Table',
   component: Table.Root,
+  // Root — native <table> плюс wrapperClassName; таблицы пропсов для него бесполезны.
+  // Показываем два подкомпонента со своим API — остальные (Head/Body/Row/Cell/HeadCell)
+  // это чистые обёртки над тегами, их состав расписан в описании ниже.
+  subcomponents: {
+    'Table.Empty': Table.Empty,
+    'Table.Skeleton': Table.Skeleton,
+  },
   parameters: {
     layout: 'padded',
     docs: {

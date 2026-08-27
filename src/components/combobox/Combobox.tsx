@@ -10,25 +10,49 @@ import { ArrowIosDownOutlineIcon } from '../../icons/index.js'
 import styles from './combobox.module.css'
 
 export type ComboboxOption = {
+  /** Значение, которое уходит в `onValueChange` и хранится в `value`. */
   value: string
+  /** Видимая подпись пункта. По ней же идёт фильтрация ввода. */
   label: string
+  /** Вторая строка пункта под подписью. В фильтр не входит. */
   description?: string
 }
 
 export type ComboboxProps = {
+  /** Список вариантов. Фильтруется по началу `label`, без учёта регистра. */
   options: readonly ComboboxOption[]
+  /** Выбранное значение (`ComboboxOption.value`) или `null`. Компонент управляемый. */
   value: string | null
+  /** Вызывается при выборе пункта и при полной очистке поля (тогда с `null`). */
   onValueChange: (value: string | null) => void
+  /** Уход фокуса с поля. Несовпавший с вариантом текст к этому моменту уже сброшен. */
   onBlur?: () => void
+  /** Подпись над полем. Также идёт в `aria-label` кнопки-стрелки. */
   label?: string
+  /** Текст в пустом поле. По умолчанию `'Select...'`. */
   placeholder?: string
+  /** Блокирует поле и кнопку. */
   disabled?: boolean
+  /** Текст ошибки под полем. Непустой включает `aria-invalid` — отдельного пропа нет. */
   error?: string
+  /** Что показать, когда фильтр ничего не нашёл. `null` — не показывать блок вовсе. По умолчанию `'No Results'`. */
   emptyMessage?: string | null
+  /** Максимум пунктов в выпадающем списке. Без него — все совпавшие. */
   limit?: number
+  /** Класс корневой обёртки — мержится через `clsx`. */
   className?: string
 }
 
+/**
+ * Поле с автодополнением: ввод фильтрует список по началу подписи, выбор пишет
+ * значение через `onValueChange`. Управляемый — держит `value` снаружи.
+ *
+ * Список уезжает порталом в `<body>`. Пустой ввод при уходе фокуса снимает выбор
+ * (`onValueChange(null)`), несовпавший с вариантом текст откатывается к подписи
+ * выбранного пункта.
+ *
+ * `className` ложится на корневую обёртку — ей задают ширину и место в раскладке.
+ */
 export const Combobox = ({
   options,
   value,

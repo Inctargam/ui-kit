@@ -73,6 +73,14 @@ const preview: Preview = {
   },
 
   parameters: {
+    // Витрина открывается на лендинге, дальше — основы (токены, иконки), потом
+    // компоненты. Внутри групп индексатор сортирует сам, по алфавиту.
+    options: {
+      storySort: {
+        order: ['Introduction', 'Foundations', 'Components'],
+      },
+    },
+
     controls: {
       matchers: {
         color: /(background|color)$/i,
