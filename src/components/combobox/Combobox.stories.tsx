@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { useArgs } from 'storybook/preview-api'
 import { expect, fn, screen } from 'storybook/test'
 
 import { Combobox } from './Combobox.js'
@@ -30,6 +31,22 @@ const meta = {
       </div>
     ),
   ],
+  // Компонент полностью управляемый: без записи value обратно выбранный пункт
+  // в поле не появляется. useArgs пишет в панель Controls (там же видно результат),
+  // спай args.onValueChange при этом продолжает дёргаться — на нём стоят проверки play.
+  render: function Render(args) {
+    const [, updateArgs] = useArgs()
+
+    return (
+      <Combobox
+        {...args}
+        onValueChange={(value) => {
+          updateArgs({ value })
+          args.onValueChange(value)
+        }}
+      />
+    )
+  },
   args: {
     label: 'Select your country',
     options: COUNTRY_OPTIONS,
