@@ -1,0 +1,73 @@
+# Хостинг витрины Storybook на GitHub Pages: сборка статики → деплой.
+# Проверки (линт, типы, тесты) — дело ci.yml на том же пуше; здесь только сборка сайта.
+# Плейврайт не ставим: он нужен `pnpm test` (стори как тесты в Chromium), а не
+# `pnpm build-storybook` — та собирает обычную статику.
+name: Deploy Storybook to Pages
+
+on:
+  push:
+    branches: [main]
+    # Пересобираем витрину только когда менялось то, что в неё входит.
+    paths:
+      - 'src/**'
+      - '.storybook/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+  workflow_dispatch:
+
+# Сбрасываем права по умолчанию: задаче нужно ровно то, что просит деплой Pages.
+permissions: {}
+
+# Пуши в main идут пачками; параллельные деплои дрались бы за окружение github-pages.
+# cancel-in-progress: false — не обрывать уже идущую публикацию на середине.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Сборка витрины
+    if: github.repository_owner == 'Inctargam'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      # pnpm до setup-node: тогда кэш pnpm-store подхватывается по lock-файлу.
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # Storybook 10 ссылается на ассеты относительными путями (./assets/…), поэтому
+      # раздача с подпути /ui-kit/ работает без --base. Сломается — добавить сюда
+      # `--base=/ui-kit/` или config.base в viteFinal (.storybook/main.ts).
+      - run: pnpm build-storybook
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: storybook-static
+
+  deploy:
+    name: Публикация
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # Имя окружения фиксировано GitHub Pages.
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      pages: write # публикация артефакта в Pages
+      id-token: write # OIDC-токен, которым deploy-pages подтверждает происхождение
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

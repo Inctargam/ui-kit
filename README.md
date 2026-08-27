@@ -1,9 +1,14 @@
 # @remark-gram/ui-kit
 
+[![Deploy Storybook to Pages](https://github.com/Inctargam/ui-kit/actions/workflows/pages.yml/badge.svg)](https://github.com/Inctargam/ui-kit/actions/workflows/pages.yml)
+
 Библиотека UI-компонентов: Base UI + CSS Modules, React 19, TypeScript.
 
 18 компонентов и 90 иконок. Тёмная тема по умолчанию, стили — CSS Modules,
 доступность и клавиатура — на примитивах Base UI.
+
+**Витрина:** [inctargam.github.io/ui-kit](https://inctargam.github.io/ui-kit/) —
+Storybook со всеми компонентами, деплой автоматом на пуш в `main`.
 
 ```bash
 pnpm add @remark-gram/ui-kit
