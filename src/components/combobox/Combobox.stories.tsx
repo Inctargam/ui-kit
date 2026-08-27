@@ -32,6 +32,16 @@ const meta = {
       </div>
     ),
   ],
+  argTypes: {
+    label: { control: 'text', description: 'Подпись над полем' },
+    placeholder: { control: 'text', description: 'Текст в пустом поле' },
+    error: { control: 'text', description: 'Текст ошибки. Непустой включает aria-invalid' },
+    emptyMessage: { control: 'text', description: 'Что показать, когда фильтр ничего не нашёл' },
+    disabled: { control: 'boolean', description: 'Блокирует поле и кнопку' },
+    limit: { control: 'number', description: 'Максимум пунктов в списке' },
+    value: { control: false, description: 'Выбранное значение (управляемое, ведётся в стори)' },
+    options: { control: false, description: 'Список вариантов' },
+  },
   // Компонент полностью управляемый (value + onValueChange). Чтобы в витрине
   // выбранный пункт реально появлялся в поле, состояние ведёт локальный useState,
   // а не useArgs: writeback через канал Storybook в связке с этим компонентом
