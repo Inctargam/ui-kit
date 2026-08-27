@@ -2,7 +2,7 @@
 
 Библиотека UI-компонентов: Base UI + CSS Modules, React 19, TypeScript.
 
-16 компонентов и 90 иконок. Тёмная тема по умолчанию, стили — CSS Modules,
+18 компонентов и 90 иконок. Тёмная тема по умолчанию, стили — CSS Modules,
 доступность и клавиатура — на примитивах Base UI.
 
 ```bash
@@ -11,24 +11,26 @@ pnpm add @remark-gram/ui-kit
 
 ## Компоненты
 
-| Компонент       | Основа                     | Коротко                                                                      |
-| --------------- | -------------------------- | ---------------------------------------------------------------------------- |
-| `Alert`         | `<div role="alert">`       | `variant`: `error` \| `success` \| `warning` \| `info`, крестик по `onClose` |
-| `Button`        | Base UI `Button`           | `variant`: `primary` \| `secondary` \| `outline` \| `text`                   |
-| `Card`          | `<div>`                    | поверхность-панель, `padding`: `none` \| `small` \| `medium` \| `large`      |
-| `Checkbox`      | Base UI `Checkbox`         | подпись — `children`, клик ловит весь ряд                                    |
-| `ConfirmDialog` | `Modal` + `Button`         | вопрос и пара кнопок, `closeOnConfirm` для асинхронного действия             |
-| `DatePicker`    | Base UI `Field`            | `mode`: одна дата или диапазон, календарь внутри, `label` и `error`          |
-| `DropdownMenu`  | Base UI `Menu`             | меню действий: `items[]`, иконка пункта — готовый элемент, `danger`          |
-| `Input`         | Base UI `Field`            | `text` / `password` / `search`, показ пароля, `label` и `error`              |
-| `Modal`         | Base UI `Dialog`           | управляемый: `open` + `onOpenChange`, шапка с `title` и крестиком            |
-| `Pagination`    | `<nav>` + Base UI `Select` | номера с многоточиями, стрелки, выбор размера страницы                       |
-| `RadioGroup`    | Base UI `RadioGroup`       | список через `options`, `direction`: `vertical` \| `horizontal`              |
-| `Recaptcha`     | `<div>`                    | только вид: `state` приходит снаружи, проверку делает потребитель            |
-| `Scroll`        | Base UI `ScrollArea`       | своя полоса прокрутки, `orientation`: `vertical` \| `horizontal` \| `both`   |
-| `Select`        | Base UI `Select`           | список через `options`, значение — `string` или `number`                     |
-| `Tabs`          | Base UI `Tabs`             | составной: `Tabs.Root` / `List` / `Tab` / `Panel`                            |
-| `TextArea`      | Base UI `Field`            | высота через `rows`, `resize: vertical`, `label` и `error`                   |
+| Компонент       | Основа                     | Коротко                                                                                      |
+| --------------- | -------------------------- | -------------------------------------------------------------------------------------------- |
+| `Alert`         | `<div role="alert">`       | `variant`: `error` \| `success` \| `warning` \| `info`, крестик по `onClose`                 |
+| `Button`        | Base UI `Button`           | `variant`: `primary` \| `secondary` \| `outline` \| `text`                                   |
+| `Card`          | `<div>`                    | поверхность-панель, `padding`: `none` \| `small` \| `medium` \| `large`                      |
+| `Checkbox`      | Base UI `Checkbox`         | подпись — `children`, клик ловит весь ряд                                                    |
+| `Combobox`      | Base UI `Combobox`         | поле с автодополнением: `options`, фильтр по началу подписи, `label`/`error`                 |
+| `ConfirmDialog` | `Modal` + `Button`         | вопрос и пара кнопок, `closeOnConfirm` для асинхронного действия                             |
+| `DatePicker`    | Base UI `Field`            | `mode`: одна дата или диапазон, календарь внутри, `label` и `error`                          |
+| `DropdownMenu`  | Base UI `Menu`             | меню действий: `items[]`, иконка пункта — готовый элемент, `danger`                          |
+| `Input`         | Base UI `Field`            | `text` / `password` / `search`, показ пароля, `label` и `error`                              |
+| `Modal`         | Base UI `Dialog`           | управляемый: `open` + `onOpenChange`, шапка с `title` и крестиком                            |
+| `Pagination`    | `<nav>` + Base UI `Select` | номера с многоточиями, стрелки, выбор размера страницы                                       |
+| `RadioGroup`    | Base UI `RadioGroup`       | список через `options`, `direction`: `vertical` \| `horizontal`                              |
+| `Recaptcha`     | `<div>`                    | только вид: `state` приходит снаружи, проверку делает потребитель                            |
+| `Scroll`        | Base UI `ScrollArea`       | своя полоса прокрутки, `orientation`: `vertical` \| `horizontal` \| `both`                   |
+| `Select`        | Base UI `Select`           | список через `options`, значение — `string` или `number`                                     |
+| `Table`         | `<table>`                  | составной: `Table.Root` / `Head` / `Body` / `Row` / `HeadCell` / `Cell`, `Empty`, `Skeleton` |
+| `Tabs`          | Base UI `Tabs`             | составной: `Tabs.Root` / `List` / `Tab` / `Panel`                                            |
+| `TextArea`      | Base UI `Field`            | высота через `rows`, `resize: vertical`, `label` и `error`                                   |
 
 Пропсы, которых нет в таблице, — нативные: `...rest` уходит на корневой элемент целиком,
 включая `ref` (в React 19 это обычный проп). Непустой `error` у полей формы сам включает

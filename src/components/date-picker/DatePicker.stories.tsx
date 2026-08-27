@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { expect } from 'storybook/test'
+import { expect, fn } from 'storybook/test'
 
 import { DatePicker } from './DatePicker.js'
 
@@ -59,6 +59,20 @@ export const Interactive: Story = {
     // Плейсхолдер сменился датой, и календарь закрылся после одиночного выбора.
     await expect(canvas.queryByText('Select date')).not.toBeInTheDocument()
     await expect(canvas.queryByRole('button', { name: '15' })).not.toBeInTheDocument()
+  },
+}
+
+// onBlur зовётся на выбор даты, на закрытие кликом по триггеру и на клик мимо —
+// нужен react-hook-form. Календарь открыт на месяце выбранной даты (initialMonth).
+export const CallsOnBlur: Story = {
+  name: 'onBlur и месяц выбранной даты',
+  args: { value: DAY, defaultOpen: true, onBlur: fn() },
+  play: async ({ args, canvas, userEvent }) => {
+    // initialMonth: календарь открылся на июле 2026, а не на текущем месяце.
+    await expect(canvas.getByText(/July 2026/i)).toBeInTheDocument()
+
+    await userEvent.click(canvas.getByRole('button', { name: '20' }))
+    await expect(args.onBlur).toHaveBeenCalled()
   },
 }
 

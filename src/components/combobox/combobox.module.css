@@ -1,0 +1,192 @@
+/* Подпись сверху, поле с рамкой, попап-«простыня» под ним, текст ошибки снизу.
+   Роли и токены те же, что у Input и Select, но контрол не Field.Root: состояния
+   ставит сам Base UI на InputGroup (data-popup-open, data-disabled). Попап уезжает
+   порталом в <body> — его правила стоят самостоятельными классами, не на .wrapper. */
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  width: 100%;
+}
+
+/* ─── Подпись ─────────────────────────────── */
+
+.label {
+  color: var(--color-text-secondary);
+  font-family: var(--font-base);
+  font-size: var(--font-size-regular-14);
+  font-weight: var(--font-weight-regular-14);
+  line-height: var(--line-height-regular-14);
+}
+
+/* ─── Рамка поля ──────────────────────────── */
+
+/* Высоту держит min-height, а не вертикальный паддинг: содержимое центрируется
+   флексом. box-sizing свой — reset.css потребитель подключать не обязан.
+   Цвет текста живёт здесь, input и trigger его наследуют — одно правило
+   гасит выключенное состояние. */
+.inputGroup {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: var(--control-height-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-bg-elevated);
+  color: var(--color-text-primary);
+  transition: border-color var(--transition-fast);
+}
+
+/* Кольцо фокуса одно на весь контрол и рисуется на обёртке: фокус получает
+   внутренний input, а обвести нужно рамку вместе со стрелкой. */
+.inputGroup:focus-within {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* Открытый список и поле — одна «простыня»: усиленная рамка и сомкнутые нижние
+   углы на стыке. Попап всегда снизу (align="start", sideOffset=0). */
+.inputGroup[data-popup-open] {
+  border-color: var(--color-border-strong);
+  border-end-start-radius: 0;
+  border-end-end-radius: 0;
+}
+
+/* Рамку выключенное поле не меняет — гасится только текст, как у Input/Select.
+   cursor наследуемый, поэтому одного правила на обёртке хватает. */
+.inputGroup[data-disabled] {
+  color: var(--color-control-text-disabled);
+  cursor: not-allowed;
+}
+
+/* ─── Поле ────────────────────────────────── */
+
+.input {
+  flex: 1;
+  min-width: 0;
+  padding-block: 0;
+  padding-inline: var(--space-3) 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-family: var(--font-base);
+  font-size: var(--font-size-regular-16);
+  font-weight: var(--font-weight-regular-16);
+  line-height: var(--line-height-regular-16);
+  outline: none;
+}
+
+/* opacity: 1 — Firefox приглушает плейсхолдер сам, и цвет из токена уезжает. */
+.input::placeholder {
+  color: var(--color-text-placeholder);
+  opacity: 1;
+}
+
+.inputGroup[data-disabled] .input::placeholder {
+  color: var(--color-control-text-disabled);
+}
+
+/* ─── Стрелка ─────────────────────────────── */
+
+.trigger {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  align-self: stretch;
+  padding-inline: var(--space-3);
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.trigger:disabled {
+  cursor: not-allowed;
+}
+
+/* Стрелка разворачивается, а не подменяется второй иконкой. */
+.icon {
+  display: flex;
+  align-items: center;
+  transition: transform var(--transition-fast);
+}
+
+.icon[data-popup-open] {
+  transform: rotate(180deg);
+}
+
+/* ─── Попап ───────────────────────────────── */
+
+/* Слой задаём здесь: Base UI ставит позиционеру только координаты, z-index не
+   трогает вовсе, а попап лежит порталом в конце <body>. --anchor-width объявлен
+   на позиционере, попап его наследует. */
+.positioner {
+  z-index: var(--z-index-popup);
+  width: var(--anchor-width, 100%);
+}
+
+.popup {
+  box-sizing: border-box;
+  width: 100%;
+  border: 1px solid var(--color-border-strong);
+  border-top: 0;
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  background-color: var(--color-bg-elevated);
+  box-shadow: var(--shadow-popup);
+  outline: none;
+  overflow: hidden;
+}
+
+.list {
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+/* ─── Пункт ───────────────────────────────── */
+
+.item {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-2) var(--space-3);
+  color: var(--color-text-primary);
+  font-family: var(--font-base);
+  font-size: var(--font-size-regular-16);
+  font-weight: var(--font-weight-regular-16);
+  line-height: var(--line-height-regular-16);
+  cursor: pointer;
+  outline: none;
+}
+
+/* Подсветка курсора/клавиатуры: заливка отмечает позицию, цвет — как у выбранного
+   пункта Select. */
+.item[data-highlighted] {
+  background-color: var(--color-bg-hover);
+  color: var(--color-accent);
+}
+
+.description {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-small);
+  line-height: var(--line-height-small);
+}
+
+/* ─── Пусто и ошибка ──────────────────────── */
+
+.empty,
+.feedback {
+  color: var(--color-text-secondary);
+  font-family: var(--font-base);
+  font-size: var(--font-size-small);
+  line-height: var(--line-height-small);
+}
+
+.empty {
+  padding: var(--space-2) var(--space-3);
+}
+
+.error {
+  color: var(--color-text-danger);
+}

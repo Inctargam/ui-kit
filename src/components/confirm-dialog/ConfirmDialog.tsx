@@ -20,9 +20,13 @@ export type ConfirmDialogProps = {
    * иначе ошибку негде показать. Тогда закрывает его владелец — по успеху.
    */
   closeOnConfirm?: boolean
+  /** Блокирует кнопку отмены — например, пока идёт необратимое действие. */
+  cancelDisabled?: boolean
   /** Блокирует подтверждение, пока подтверждённое действие ещё выполняется. */
   confirmDisabled?: boolean
   confirmLabel?: string
+  /** Блок обратной связи над вопросом — например, ошибка сервера после неудачного подтверждения. */
+  error?: ReactNode
   message: ReactNode
   /** Вызывается на отмену, крестик и любое другое закрытие. */
   onCancel?: () => void
@@ -31,7 +35,7 @@ export type ConfirmDialogProps = {
   // сам и наружу не отдаёт — снаружи отмена одна, чем бы она ни была вызвана.
   onOpenChange: (open: boolean) => void
   title: string
-} & Pick<ModalProps, 'disablePointerDismissal' | 'open'>
+} & Pick<ModalProps, 'disablePointerDismissal' | 'dismissDisabled' | 'open'>
 
 /**
  * Диалог подтверждения: заголовок, вопрос и пара кнопок.
@@ -42,12 +46,15 @@ export type ConfirmDialogProps = {
  * `onCancel`, поэтому владельцу достаточно одного обработчика.
  */
 export const ConfirmDialog = ({
+  cancelDisabled = false,
   cancelLabel = 'No',
   className,
   closeOnConfirm = true,
   confirmDisabled = false,
   confirmLabel = 'Yes',
   disablePointerDismissal = true,
+  dismissDisabled = false,
+  error,
   message,
   onCancel,
   onConfirm,
@@ -81,9 +88,11 @@ export const ConfirmDialog = ({
     <Modal
       className={className}
       disablePointerDismissal={disablePointerDismissal}
+      dismissDisabled={dismissDisabled}
       onOpenChange={openChangeHandler}
       open={open}
       title={title}>
+      {error ? <div className={styles.error}>{error}</div> : null}
       <div className={styles.message}>{message}</div>
       <div className={styles.actions}>
         {/* Подтверждение — вторичная кнопка, отмена — акцентная: так нарисовано
@@ -91,7 +100,7 @@ export const ConfirmDialog = ({
         <Button className={styles.action} disabled={confirmDisabled} onClick={confirmHandler} variant="outline">
           {confirmLabel}
         </Button>
-        <Button className={styles.action} onClick={cancelHandler} variant="primary">
+        <Button className={styles.action} disabled={cancelDisabled} onClick={cancelHandler} variant="primary">
           {cancelLabel}
         </Button>
       </div>

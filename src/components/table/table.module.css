@@ -1,0 +1,76 @@
+/* Контейнер со скроллом: на узком экране таблица прокручивается внутри своей
+   коробки, а не растягивает страницу. */
+.wrapper {
+  width: 100%;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--color-text-primary);
+  font-family: var(--font-base);
+  font-size: var(--font-size-regular-14);
+  font-weight: var(--font-weight-regular-14);
+  line-height: var(--line-height-regular-14);
+  text-align: left;
+}
+
+.head {
+  background-color: var(--color-bg-elevated);
+}
+
+/* Разделитель под шапкой и между строками. */
+.body .row {
+  border-top: 1px solid var(--color-border);
+}
+
+.headCell {
+  padding: var(--space-3) var(--space-6);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-bold-14);
+  font-weight: var(--font-weight-bold-14);
+  line-height: var(--line-height-bold-14);
+  white-space: nowrap;
+}
+
+.cell {
+  padding: var(--space-3) var(--space-6);
+  vertical-align: middle;
+}
+
+.emptyCell {
+  padding: var(--space-6);
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+
+/* Заливка скелетона — существующий --color-bg-hover: отдельный токен под неё
+   не заводим, потребитель один. */
+.skeleton {
+  display: block;
+  width: 100%;
+  height: 16px;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-bg-hover);
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes skeleton-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}

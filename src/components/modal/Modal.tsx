@@ -26,6 +26,13 @@ export type ModalProps = {
   className?: string
   /** Закрытие остаётся только на крестике и Esc — клик вне модалки её не закрывает. */
   disablePointerDismissal?: boolean
+  /** Слот слева в шапке. Когда задан, шапка переключается на сетку 24px 1fr 24px, заголовок центрируется. */
+  headerStart?: ReactNode
+  /**
+   * Глушит все пути закрытия (крестик, Esc, клик мимо), пока идёт необратимое действие.
+   * Обёртка над `onOpenChange` + `disabled` у крестика; клик мимо снимает `disablePointerDismissal`.
+   */
+  dismissDisabled?: boolean
 } & Omit<DialogPopupProps, 'children' | 'className' | 'title'>
 
 /**
@@ -43,20 +50,37 @@ export const Modal = ({
   bodyClassName,
   className,
   disablePointerDismissal = false,
+  headerStart,
+  dismissDisabled = false,
   ...props
-}: ModalProps) => (
-  <Dialog.Root open={open} onOpenChange={onOpenChange} disablePointerDismissal={disablePointerDismissal}>
-    <Dialog.Portal>
-      <Dialog.Backdrop className={styles.backdrop} />
-      <Dialog.Popup className={clsx(styles.popup, className)} {...props}>
-        <div className={styles.header}>
-          <Dialog.Title className={styles.title}>{title}</Dialog.Title>
-          <Dialog.Close className={styles.close} aria-label="Close">
-            <CloseOutlineIcon />
-          </Dialog.Close>
-        </div>
-        <div className={clsx(styles.body, bodyClassName)}>{children}</div>
-      </Dialog.Popup>
-    </Dialog.Portal>
-  </Dialog.Root>
-)
+}: ModalProps) => {
+  // Крестик и Esc гасятся здесь, клик мимо — через disablePointerDismissal ниже.
+  const openChangeHandler: DialogRootProps['onOpenChange'] = (nextOpen, eventDetails) => {
+    if (!nextOpen && dismissDisabled) {
+      return
+    }
+
+    onOpenChange?.(nextOpen, eventDetails)
+  }
+
+  return (
+    <Dialog.Root
+      open={open}
+      onOpenChange={openChangeHandler}
+      disablePointerDismissal={disablePointerDismissal || dismissDisabled}>
+      <Dialog.Portal>
+        <Dialog.Backdrop className={styles.backdrop} />
+        <Dialog.Popup className={clsx(styles.popup, className)} {...props}>
+          <div className={styles.header} data-has-start={headerStart ? true : undefined}>
+            {headerStart ? <div className={styles.headerStart}>{headerStart}</div> : null}
+            <Dialog.Title className={styles.title}>{title}</Dialog.Title>
+            <Dialog.Close className={styles.close} aria-label="Close" disabled={dismissDisabled}>
+              <CloseOutlineIcon />
+            </Dialog.Close>
+          </div>
+          <div className={clsx(styles.body, bodyClassName)}>{children}</div>
+        </Dialog.Popup>
+      </Dialog.Portal>
+    </Dialog.Root>
+  )
+}
