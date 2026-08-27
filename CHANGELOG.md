@@ -1,5 +1,12 @@
 # @remark-gram/ui-kit
 
+## 0.2.1
+
+### Patch Changes
+
+- [#10](https://github.com/Inctargam/ui-kit/pull/10) [`9e3af6e`](https://github.com/Inctargam/ui-kit/commit/9e3af6e19b140d7177f9e28ce9cbb98d46a92f79) Thanks [@AlxTafari](https://github.com/AlxTafari)! - `ComboboxProps` и `ComboboxOption` получили JSDoc на каждое поле — описания теперь
+  видны в подсказках редактора и в таблице пропсов витрины. Поведение не изменилось.
+
 ## 0.2.0
 
 ### Minor Changes
