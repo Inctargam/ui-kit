@@ -49,4 +49,13 @@ export default defineConfig([
       'react-refresh/only-export-components': 'off',
     },
   },
+  {
+    // Составной Table экспортируется одним объектом (Table.Root, Table.Cell, …),
+    // а не набором компонентов — react-refresh видит объект и ругается. Паттерн
+    // намеренный, HMR стори от него не страдает.
+    files: ['src/components/table/Table.tsx'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
+  },
 ])

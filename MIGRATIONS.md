@@ -233,7 +233,7 @@ API растёт — релиз minor.
   заголовок `text-align: center`. В исходнике было `24px` / `16px` литералами
 - \+ `dismissDisabled?: boolean` — глушит крестик (`disabled` у `Dialog.Close`), Esc
   (ранний выход в обёртке `onOpenChange`) и клик мимо (`disablePointerDismissal ||
-  dismissDisabled`)
+dismissDisabled`)
 - ± `onOpenChange` теперь идёт через обёртку `openChangeHandler`, тип сохранён от Base UI
   (вторым аргументом — причина закрытия)
 - \+ `.close:disabled` — `--color-control-text-disabled` + `cursor: not-allowed`
@@ -276,6 +276,59 @@ API растёт — релиз minor.
 
 ---
 
+## Батч 8: `combobox`, `table`
+
+Новые компоненты, появились в `remark-gram` 11–13 августа. Публичный API растёт —
+релиз minor. Новых токенов нет.
+
+`combobox` (Base UI `Combobox`):
+
+- \+ перенесён `cp`-ом, модуль `Combobox.module.css` → `combobox.module.css`
+- ± `<Icon iconId="icon-arrow-ios-down-outline" width={16} height={16} />` →
+  `<ArrowIosDownOutlineIcon size={16} />`
+- \+ `'use client'` — внутри `useState`/`useId`, в исходнике директивы не было
+- ± база палитры → семантика: `--color-dark-500` → `--color-bg-elevated`,
+  `--color-dark-100` → `--color-border`, `--color-light-100` → `--color-text-primary`
+  и `--color-border-strong` (усиленная рамка открытого поля), `--color-light-900` →
+  `--color-text-secondary`, `--color-primary-500` → `--color-accent`,
+  `--color-danger-500` → `--color-text-danger`
+- ± фокус `outline: 2px solid var(--color-primary-500)` → общее кольцо кита
+  (`--focus-ring-width` / `--color-focus-ring` / `--focus-ring-offset`)
+- ± `.positioner { z-index: 100 }` → `var(--z-index-popup)`; попапу добавлен
+  `box-shadow: var(--shadow-popup)` — как у `Select`
+- ± высота поля через `min-height: var(--control-height-md)` на `.inputGroup`,
+  а не вертикальный паддинг `.input`
+- ± `.inputGroup[data-disabled] { opacity: 0.5 }` → цвет текста
+  `--color-control-text-disabled` (правило кита: состояние не через `opacity`)
+- ± литералы `2px` → `var(--radius-sm)`, `6px/8px/12px` паддинги → `var(--space-*)`,
+  `0.15s ease` → `var(--transition-fast)`
+- ± стори: `title` → `Components/Combobox`, тип из `@storybook/react-vite`,
+  `tags: ['autodocs']` убран, `name` по-русски строковым литералом, `userEvent`
+  из аргументов `play`, `screen` вместо `within(body)`
+- − английские строки (`placeholder='Select...'`, `emptyMessage='No Results'`,
+  `aria-label` стрелки) оставлены как в исходнике — в долг i18n
+
+`table` (композиционный, нативные элементы):
+
+- \+ перенесён `cp`-ом, модуль уже `table.module.css`
+- ± `ComponentPropsWithoutRef<…>` → `ComponentProps<…>` — в React 19 `ref` обычный
+  проп, `{...props}` пробрасывает его на DOM-узел
+- ± база палитры → семантика: `--color-dark-500` → `--color-bg-elevated`,
+  `--color-dark-300` → `--color-border` (рамка контейнера и разделители строк) и
+  `--color-bg-hover` (заливка скелетона), `--color-light-100` → `--color-text-primary`
+- − отдельный токен под заливку скелетона не заводим — потребитель один,
+  взят существующий `--color-bg-hover`
+- ± литералы `2px` → `var(--radius-sm)`, `12px 24px` / `24px` → `var(--space-3) var(--space-6)`
+- ± `index.ts`: `export * from './Table'` → явный список типов + `Table`, с `.js`
+- \+ `eslint.config.js`: `react-refresh/only-export-components` выключен для
+  `table/Table.tsx` — составной компонент экспортируется объектом, не набором функций
+- ± стори: `title` → `Components/Table`, тип из `@storybook/react-vite`,
+  `tags: ['autodocs']` убран, `name` по-русски строковым литералом
+- − английские строки в стори (`You don't have any payments yet`) — это данные стори,
+  не компонент
+
+---
+
 ## Долги
 
 - `--color-border-disabled` — потребителей нет, кандидат на удаление
@@ -283,7 +336,8 @@ API растёт — релиз minor.
   `aria-label` кнопки показа пароля; батч 4 — `aria-label` крестиков `Alert`/`Modal`
   и тексты ошибок `Recaptcha` (у последних есть пропы-переопределения, у первых нет);
   батч 5 — `placeholder` пикера `'Select date'`, формат даты `en-GB` (`dd/mm/yyyy`),
-  подписи дней недели латиницей
+  подписи дней недели латиницей; батч 8 — `Combobox`: `placeholder='Select...'`,
+  `emptyMessage='No Results'`, `aria-label` стрелки (`Show {label} options`)
 - `Modal` остался конфигурируемым (`title` пропом), а не композиционным
   (`<Modal.Header/>`) — против принципа 2 роадмапа. Перенос не переписывание;
   разбирать, когда появится модалка со своей шапкой
@@ -301,3 +355,8 @@ API растёт — релиз minor.
   reCAPTCHA v3, виджет из форм убран. В ките компонент остаётся без потребителя —
   решать, оставлять его или помечать устаревшим (этап 9)
 - ширина попапа меню `min-width: 160px` — литерал, токена ширины в ките нет
+- `Combobox`: `.list { max-height: 240px }` — литерал; позиционер Base UI `Combobox`
+  здесь не отдаёт `--available-height`, как у `Select`. Токена высоты списка в ките нет
+- `Combobox` не поддерживает `data-popup-side`: попап и сомкнутые углы захардкожены
+  «снизу». У нижнего края экрана Base UI перевернёт список наверх, а рамка останется
+  сомкнутой не с той стороны. `Select` это уже умеет — привести к нему
