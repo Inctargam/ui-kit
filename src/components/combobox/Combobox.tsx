@@ -71,18 +71,21 @@ export const Combobox = ({
         </label>
       )}
 
+      {/* openOnInputClick оставлен по умолчанию (true): при очистке поля Base UI
+          снимает выбор и, если клик по полю не открывает список, ещё и закрывает
+          его — тогда после удаления текста выпадашку уже не вернуть, только стрелкой.
+          С открытием по клику очистка сразу показывает полный список для нового выбора. */}
       <BaseCombobox.Root
         autoHighlight
         disabled={disabled}
         filter={filter.startsWith}
-        isItemEqualToValue={(option, selectedValue) => option.value === selectedValue.value}
+        isItemEqualToValue={(option, selectedValue) => option.value === selectedValue?.value}
         itemToStringLabel={(option) => option.label}
         items={options}
         inputValue={inputValue}
         limit={limit}
         onInputValueChange={setQuery}
         onValueChange={valueChangeHandler}
-        openOnInputClick={false}
         value={selectedOption}>
         <BaseCombobox.InputGroup className={styles.inputGroup}>
           <BaseCombobox.Input

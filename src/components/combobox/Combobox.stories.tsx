@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { useArgs } from 'storybook/preview-api'
+import { useState } from 'react'
 import { expect, fn, screen } from 'storybook/test'
 
+import type { ComboboxProps } from './Combobox.js'
 import { Combobox } from './Combobox.js'
 
 const COUNTRY_OPTIONS = [
@@ -31,18 +32,21 @@ const meta = {
       </div>
     ),
   ],
-  // Компонент полностью управляемый: без записи value обратно выбранный пункт
-  // в поле не появляется. useArgs пишет в панель Controls (там же видно результат),
-  // спай args.onValueChange при этом продолжает дёргаться — на нём стоят проверки play.
-  render: function Render(args) {
-    const [, updateArgs] = useArgs()
+  // Компонент полностью управляемый (value + onValueChange). Чтобы в витрине
+  // выбранный пункт реально появлялся в поле, состояние ведёт локальный useState,
+  // а не useArgs: writeback через канал Storybook в связке с этим компонентом
+  // уводит превью в бесконечный ре-рендер. Спай args.onValueChange по-прежнему
+  // дёргается — на нём стоят проверки play.
+  render: function Render({ value: initialValue, onValueChange, ...args }: ComboboxProps) {
+    const [value, setValue] = useState(initialValue)
 
     return (
       <Combobox
         {...args}
-        onValueChange={(value) => {
-          updateArgs({ value })
-          args.onValueChange(value)
+        value={value}
+        onValueChange={(next) => {
+          setValue(next)
+          onValueChange(next)
         }}
       />
     )
@@ -68,6 +72,18 @@ export const Default: Story = {
     await userEvent.click(await screen.findByRole('option', { name: 'Belarus' }))
 
     await expect(args.onValueChange).toHaveBeenCalledWith('BY')
+    // Выбранный пункт остаётся в поле — витрина ведёт value через useState.
+    await expect(input).toHaveValue('Belarus')
+  },
+}
+
+export const Selected: Story = {
+  name: 'С выбранным значением',
+  args: {
+    value: 'BY',
+  },
+  play: async ({ canvas }) => {
+    await expect(canvas.getByRole('combobox')).toHaveValue('Belarus')
   },
 }
 
@@ -105,8 +121,26 @@ export const OpensAllOptionsFromTrigger: Story = {
   },
 }
 
-export const RestoresSelectedValueOnBlur: Story = {
-  name: 'Возврат значения на клик мимо',
+export const ClearingInputDeselects: Story = {
+  name: 'Очистка поля снимает выбор',
+  args: {
+    value: 'BY',
+  },
+  play: async ({ args, canvas, userEvent }) => {
+    const input = canvas.getByRole('combobox')
+    await expect(input).toHaveValue('Belarus')
+
+    // Полная очистка поля — Base UI снимает выбор (onValueChange(null)),
+    // список остаётся открытым для нового выбора.
+    await userEvent.clear(input)
+
+    await expect(args.onValueChange).toHaveBeenCalledWith(null)
+    await expect(input).toHaveValue('')
+  },
+}
+
+export const ReselectsAfterClearing: Story = {
+  name: 'Новый выбор после очистки',
   args: {
     value: 'BY',
   },
@@ -114,15 +148,15 @@ export const RestoresSelectedValueOnBlur: Story = {
     const input = canvas.getByRole('combobox')
 
     await userEvent.clear(input)
-    await userEvent.type(input, 'Unknown')
-    await userEvent.tab()
+    await userEvent.type(input, 'pol')
+    await userEvent.click(await screen.findByRole('option', { name: 'Poland' }))
 
-    await expect(input).toHaveValue('Belarus')
+    await expect(input).toHaveValue('Poland')
   },
 }
 
-export const ClearsUnmatchedValueOnBlur: Story = {
-  name: 'Сброс несовпавшего значения',
+export const UnmatchedTextClearsOnBlur: Story = {
+  name: 'Несовпавший текст сбрасывается на клик мимо',
   play: async ({ canvas, userEvent }) => {
     const input = canvas.getByRole('combobox')
 

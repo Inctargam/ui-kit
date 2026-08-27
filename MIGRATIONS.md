@@ -302,9 +302,17 @@ dismissDisabled`)
   `--color-control-text-disabled` (правило кита: состояние не через `opacity`)
 - ± литералы `2px` → `var(--radius-sm)`, `6px/8px/12px` паддинги → `var(--space-*)`,
   `0.15s ease` → `var(--transition-fast)`
+- − `openOnInputClick={false}` из исходника убран (умолчание Base UI — `true`).
+  При очистке поля Base UI снимает выбор и с `false` ещё и закрывает список —
+  после удаления текста выпадашку было не вернуть, только стрелкой. Это и был баг
+  «после удаления селект не реагирует»
+- ± `isItemEqualToValue` — страж `selectedValue?.value` вместо `selectedValue.value`
 - ± стори: `title` → `Components/Combobox`, тип из `@storybook/react-vite`,
   `tags: ['autodocs']` убран, `name` по-русски строковым литералом, `userEvent`
-  из аргументов `play`, `screen` вместо `within(body)`
+  из аргументов `play`, `screen` вместо `within(body)`. `meta.render` ведёт `value`
+  через `useState` — компонент полностью управляемый, без записи обратно выбранный
+  пункт в поле не появлялся; `useArgs` в связке с этим компонентом уводил превью
+  Storybook в бесконечный ре-рендер
 - − английские строки (`placeholder='Select...'`, `emptyMessage='No Results'`,
   `aria-label` стрелки) оставлены как в исходнике — в долг i18n
 
